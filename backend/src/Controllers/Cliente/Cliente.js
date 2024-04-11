@@ -1,8 +1,8 @@
-import express from 'express';
+import express from 'express'
 const cliente = express()
 cliente.use(express.json())
 
-const clientes = [{id:"1",nome_completo:"Renato Porto Morillo",email:"renatomorillo@gmail.com",cpf:"46544167819",endereco:"Rua Armando Pisani 111",telefone:"16997410581"}];
+const clientes = [{id:"1",nome_completo:"Renato Porto Morillo",email:"renatomorillo@gmail.com",cpf:"46544167819",endereco:"Rua Armando Pisani 111",telefone:"16997410581"}]
 
 cliente.get("/clientes",(req,res)=>{
     res.status(200).send(clientes);
