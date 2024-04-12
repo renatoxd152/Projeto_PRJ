@@ -5,11 +5,11 @@ itens_compra.use(express.json())
 const itens = [{id:"1",id_compra:1,id_produto:1},{id:"12",id_compra:1,id_produto:2}]
 
 
-compra.get("/itensCompras",(req,res)=>{
+itens_compra.get("/itensCompras",(req,res)=>{
     res.status(200).send(itens)
 })
 
-compra.post("/itensCompras",(req,res)=>
+itens_compra.post("/itensCompras",(req,res)=>
 {
     const{id_compra,id_produto} = req.body
 
@@ -20,7 +20,7 @@ compra.post("/itensCompras",(req,res)=>
     res.status(200).json({mensagem:"O item da compra foi cadastrado com sucesso!"})
 })
 
-compra.put("/itensCompras/:id",(req,res)=>{
+itens_compra.put("/itensCompras/:id",(req,res)=>{
     let index = buscarIndexItensCompra(req.params.id)
     itens[index].id_compra = req.body.id_compra
     itens[index].id_produto = req.body.id_produto
@@ -28,7 +28,7 @@ compra.put("/itensCompras/:id",(req,res)=>{
     res.status(200).json(itens)
 })
 
-compra.delete("/itensCompras/:id",(req,res)=>
+itens_compra.delete("/itensCompras/:id",(req,res)=>
 {
     let index = buscarIndexItensCompra(req.params.id)
     itens.splice(index,1)

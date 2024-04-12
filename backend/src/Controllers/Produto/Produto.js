@@ -1,25 +1,35 @@
-import express from 'express'
+import express from 'express';
+import Produto from '../../model/Produto/ProdutoModel.js';
 const produto = express()
-produto.use(express.json())
 
-const produtos = [{id:"1",nome:"Lápis",preco:3.5,quantidade:20}]
+produto.use(express.json());
+
+//const produtos = [{id:"1",nome:"Lápis",preco:3.5,quantidade:20}]
 
 produto.get("/produtos",(req,res)=>
 {
     res.status(200).send(produtos)
 })
 
-produto.post("/produtos",(req,res)=>
-{
-    const{nome,preco,quantidade} = req.body
+produto.post("/produtos", async (req, res) => {
+    try {
+        const { nome, preco, quantidade } = req.body;
+        console.log("Dados do Produto:", req.body);
 
-    const novoProduto = {
-        nome,preco,quantidade
+        console.log("Nome do Produto:", req.body.nome);
+
+        const novoProduto = await Produto.create({
+            nome,
+            preco,
+            quantidade
+        });
+
+        res.status(200).json({ mensagem: `O produto ${novoProduto.nome} foi adicionado com sucesso!` });
+    } catch (error) {
+        //console.log(error);
+        res.status(500).json({ erro: 'Erro interno do servidor' });
     }
-
-    produtos.push(novoProduto)
-    res.status(200).json({mensagem:"O produto foi adicionado com sucesso!"})
-})
+});
 
 produto.put("/produtos/:id",(req,res)=>{
 
