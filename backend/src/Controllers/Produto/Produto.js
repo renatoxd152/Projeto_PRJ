@@ -4,19 +4,23 @@ const produto = express()
 
 produto.use(express.json());
 
-//const produtos = [{id:"1",nome:"Lápis",preco:3.5,quantidade:20}]
-
-produto.get("/produtos",(req,res)=>
+produto.get("/produtos",async (req,res)=>
 {
-    res.status(200).send(produtos)
+    const produtosdoBanco = await Produto.findAll();
+
+    const mensagem = produtosdoBanco.map(produto =>({
+        nome:produto.nome,
+        preco:produto.preco,
+        quantidade:produto.quantidade
+    }))
+
+
+    res.status(200).json(mensagem)
 })
 
 produto.post("/produtos", async (req, res) => {
     try {
         const { nome, preco, quantidade } = req.body;
-        console.log("Dados do Produto:", req.body);
-
-        console.log("Nome do Produto:", req.body.nome);
 
         const novoProduto = await Produto.create({
             nome,
@@ -26,31 +30,56 @@ produto.post("/produtos", async (req, res) => {
 
         res.status(200).json({ mensagem: `O produto ${novoProduto.nome} foi adicionado com sucesso!` });
     } catch (error) {
-        //console.log(error);
         res.status(500).json({ erro: 'Erro interno do servidor' });
     }
 });
 
-produto.put("/produtos/:id",(req,res)=>{
+produto.put("/produtos/:id", async (req, res) => {
+    try {
+        let id = req.params.id;
+         
+        const { nome, preco, quantidade } = req.body;
 
-    let index = buscarIndexProduto(req.params.id)
-    produtos[index].nome = req.body.nome
-    produtos[index].preco = req.body.preco
-    produtos[index].quantidade = req.body.quantidade
+        let produtoParaAtualizar = await Produto.findByPk(id);
+        
+        if (!produtoParaAtualizar) {
+            return res.status(404).json({ erro: 'Produto não encontrado' });
+        }
 
-    res.status(200).json(produtos)
+        produtoParaAtualizar.nome = nome;
+        produtoParaAtualizar.preco = preco;
+        produtoParaAtualizar.quantidade = quantidade;
+
+        await produtoParaAtualizar.save();
+
+        res.status(200).json(produtoParaAtualizar);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ erro: 'Erro interno do servidor' });
+    }
+});
+
+produto.delete("/produtos/:id",async (req,res)=>
+{
+    try{
+        let index = req.params.id
+        
+        let produtoparaDeletar = await Produto.findByPk(index)
+    
+        if (!produtoparaDeletar) {
+            return res.status(404).json({ erro: 'Produto não encontrado' });
+        }
+        produtoparaDeletar.destroy()
+        
+        res.status(201).json({mensagem:`Produto com id ${req.params.id} excluído com sucesso!`})
+    }
+    catch(erro)
+    {
+        console.log(error);
+        res.status(500).json({ erro: 'Erro interno do servidor' });
+    }
+    
 })
 
-produto.delete("/produtos/:id",(req,res)=>
-{
-    let index = buscarIndexProduto(req.params.id)
-    produtos.splice(index,1)
-    res.status(201).json({mensagem:`Produto com id ${req.params.id} excluído com sucesso!`})
-})
-
-function buscarIndexProduto(id)
-{
-    return produtos.findIndex(produto => produto.id == id)
-}
 
 export default produto
