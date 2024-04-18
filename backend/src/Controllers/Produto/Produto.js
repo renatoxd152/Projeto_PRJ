@@ -67,7 +67,7 @@ produto.delete("/produtos/:id",async (req,res)=>
         let produtoparaDeletar = await Produto.findByPk(index)
     
         if (!produtoparaDeletar) {
-            return res.status(404).json({ erro: 'Produto não encontrado' });
+            return res.status(404).json({ erro: 'O produto não encontrado' });
         }
         produtoparaDeletar.destroy()
         

@@ -1,59 +1,79 @@
 import express from 'express'
+import Cliente from '../../model/Cliente/ClienteModel.js'
 const cliente = express()
 cliente.use(express.json())
 
-const clientes = [{id:"1",nome_completo:"Renato Porto Morillo",email:"renatomorillo@gmail.com",cpf:"46544167819",endereco:"Rua Armando Pisani 111",telefone:"16997410581"}]
-
-cliente.get("/clientes",(req,res)=>{
-    res.status(200).send(clientes);
+cliente.get("/clientes",async(req,res)=>{
+    const clientesdoBanco = await Cliente.findAll();
+    const mensagem = clientesdoBanco.map(cliente =>({
+        nome:cliente.nome,
+        email:cliente.email,
+        cpf:cliente.cpf,
+        endereco:cliente.endereco,
+        telefone:cliente.telefone
+    }))
+    res.status(200).json(mensagem);
 
 })
 
-cliente.post("/clientes",(req,res)=>
+cliente.post("/clientes",async(req,res)=>
 {
     
     const{nome_completo,email,cpf,endereco,telefone} = req.body;
-
-    const novoCliente = {
+    const clienteNovo = await Cliente.create({
         nome_completo,
         email,
         cpf,
         endereco,
         telefone
-    };
+    })
 
-    clientes.push(novoCliente)
-    res.status(201).json({mensagem:"Cliente cadastrado com sucesso!"})
+    res.status(201).json({mensagem:`O Cliente ${clienteNovo.nome_completo} cadastrado com sucesso!`})
 })
 
 
-cliente.put("/clientes/:id",(req,res)=>
+cliente.put("/clientes/:id",async(req,res)=>
 {
-    let index = buscarIndexCliente(req.params.id)
-    clientes[index].nome_completo = req.body.nome_completo
-    clientes[index].email = req.body.email
-    clientes[index].cpf = req.body.cpf
-    clientes[index].endereco = req.body.endereco
-    clientes[index].telefone= req.body.telefone
+    try{
 
-    res.status(200).json(clientes)
+        let index = req.params.id;
+        let {nome,email,cpf,endereco,telefone} = req.body;
+
+        let clienteparaAtualizar = await Cliente.findByPk(index);
+
+        if(!clienteparaAtualizar)
+        {
+            return res.status(404).json({mensagem:"Esse cliente não foi encontrado!"})
+        }
+        clienteparaAtualizar.nome = nome
+        clienteparaAtualizar.email = email
+        clienteparaAtualizar = cpf
+        clienteparaAtualizar.endereco = endereco
+        clienteparaAtualizar.telefone= telefone
+
+        await clienteparaAtualizar.save();
+
+        res.status(200).json(clienteparaAtualizar)
+    }
+    catch(error)
+    {
+        res.status(500).json({mensagem:"Erro interno no servidor!"})
+    }
 })
 
 
-cliente.delete("/clientes/:id",(req,res)=>
+cliente.delete("/clientes/:id",async(req,res)=>
 {
-    let index = buscarIndexCliente(req.params.id)
-    clientes.splice(index,1)
+    let index = req.params.id;
+
+    let clienteparaDeletar = await Cliente.findByPk(index);
+
+    if(!clienteparaDeletar){
+        return res.status(404).json({mensagem:"O cliente não foi encontrado!"})
+    }
+    clienteparaDeletar.destroy()
+
     res.status(201).json({mensagem:`Cliente com id ${req.params.id} excluído com sucesso!`})
 })
 
-function buscarClienteId(id)
-{
-    return clientes.filter(cliente => cliente.id == id)
-}
-
-function buscarIndexCliente(id)
-{
-    return clientes.findIndex(cliente => cliente.id == id)
-}
 export default cliente

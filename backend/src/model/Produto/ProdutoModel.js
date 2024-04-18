@@ -29,7 +29,7 @@ const Produto = sequelize.define('produtos',
 })
 
 sequelize.sync({ force: false }).then(() => {
-    console.log('Tabela cliente sincronizado');
+    console.log('Tabela produto sincronizado');
   });
 
 
