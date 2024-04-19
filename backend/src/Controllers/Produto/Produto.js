@@ -6,16 +6,22 @@ produto.use(express.json());
 
 produto.get("/produtos",async (req,res)=>
 {
-    const produtosdoBanco = await Produto.findAll();
+    try{
+        const produtosdoBanco = await Produto.findAll();
 
-    const mensagem = produtosdoBanco.map(produto =>({
-        nome:produto.nome,
-        preco:produto.preco,
-        quantidade:produto.quantidade
-    }))
+        const mensagem = produtosdoBanco.map(produto =>({
+            nome:produto.nome,
+            preco:produto.preco,
+            quantidade:produto.quantidade
+        }))
 
 
-    res.status(200).json(mensagem)
+        res.status(200).json(mensagem)
+    }
+    catch(erro){
+        res.status(500).json({mensagem:"Erro interno no servidor!"})
+    }
+    
 })
 
 produto.post("/produtos", async (req, res) => {
@@ -69,7 +75,7 @@ produto.delete("/produtos/:id",async (req,res)=>
         if (!produtoparaDeletar) {
             return res.status(404).json({ erro: 'O produto não encontrado' });
         }
-        produtoparaDeletar.destroy()
+        await produtoparaDeletar.destroy()
         
         res.status(201).json({mensagem:`Produto com id ${req.params.id} excluído com sucesso!`})
     }
