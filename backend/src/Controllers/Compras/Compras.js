@@ -1,6 +1,7 @@
 import express from 'express'
 import Cliente from '../../model/Cliente/ClienteModel'
 import Compra from '../../model/Compras/ComprasModel'
+import ItensCompra from '../../model/Compras/ItensComprasModel'
 const compra = express()
 compra.use(express.json())
 
@@ -22,16 +23,28 @@ compra.get("/compras",async(req,res)=>{
     {
         res.status(500).json({mensagem:"Erro interno no servidor!"})
     }
-    res.status(200).send(compras)
 })
 
 compra.post("/compras",async(req,res)=>
 {
     try{
-        const{valor_compra,data_compra,id_cliente,id_admin} = req.body
+        const{valor_compra,data_compra,id_cliente,id_admin,produtos} = req.body
 
-        await Compra.create({valor_compra,data_compra,id_cliente,id_admin})
+        let novaCompra = await Compra.create({valor_compra,data_compra,id_cliente,id_admin})
     
+        await Promise.all(
+            produtos.map(async(produto)=>{
+                await ItensCompra.create(
+                    {
+                        id_compra:novaCompra.id,
+                        id_produto:produto.id,
+                        quantidade:produto.quantidade,
+                        valor_total:produto.valor_total
+                    }
+                )
+            })
+        )
+
         res.status(200).json({mensagem:"A compra foi cadastrada com sucesso!"})
 
     }

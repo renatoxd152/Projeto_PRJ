@@ -1,24 +1,25 @@
 import express from 'express'
+import ItensCompra from '../../model/Compras/ItensComprasModel'
 const itens_compra = express()
 itens_compra.use(express.json())
 
 const itens = [{id:"1",id_compra:1,id_produto:1},{id:"12",id_compra:1,id_produto:2}]
 
 
-itens_compra.get("/itensCompras",(req,res)=>{
-    res.status(200).send(itens)
+itens_compra.get("/itensCompras/:id",async(req,res)=>{
+    try {
+        let id_compra = req.params.id;
+        let itensdaCompra = await ItensCompra.findAll(
+        {
+            where: {id_compra: id_compra}
+        }
+        )
+        res.status(200).json(itensdaCompra)
+    } catch (error) {
+        res.send(500).json({mensagem:"Erro interno no servidor!"})
+    }
 })
 
-itens_compra.post("/itensCompras",(req,res)=>
-{
-    const{id_compra,id_produto} = req.body
-
-    const novaItemCompra = {id_compra,id_produto}
-
-    itens.push(novaItemCompra)
-
-    res.status(200).json({mensagem:"O item da compra foi cadastrado com sucesso!"})
-})
 
 itens_compra.put("/itensCompras/:id",(req,res)=>{
     let index = buscarIndexItensCompra(req.params.id)
