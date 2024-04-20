@@ -44,7 +44,7 @@ compra.post("/compras",async(req,res)=>
 compra.put("/compras/:id",async(req,res)=>{
     try{
         let index = req.params.id
-        
+
         let {valor,data,id_cliente,id_admin} = req.body
         let compraparaAtualizar = await Compra.findByPk(index)
 
@@ -68,16 +68,21 @@ compra.put("/compras/:id",async(req,res)=>{
 
 compra.delete("/compras/:id",async(req,res)=>
 {
-    let index = req.params.id;
-    let compraparaDeletar = await Compra.findByPk(index);
+    try {
+        
+        let index = req.params.id;
+        let compraparaDeletar = await Compra.findByPk(index);
 
-    if(!compraparaDeletar){
-        return res.status(404).json({mensagem:"A compra não foi encontrado!"})
+        if(!compraparaDeletar){
+            return res.status(404).json({mensagem:"A compra não foi encontrado!"})
+        }
+
+        await compraparaDeletar.destroy()
+
+        res.status(201).json({mensagem:`Compra com id ${req.params.id} excluído com sucesso!`})
+    } catch (error) {
+        res.send(500).json({mensagem:"Erro interno no servidor"})
     }
-
-    await compraparaDeletar.destroy()
-
-    res.status(201).json({mensagem:`Compra com id ${req.params.id} excluído com sucesso!`})
 })
 
 
