@@ -25,6 +25,34 @@ compra.get("/compras",async(req,res)=>{
     }
 })
 
+compra.get("/compras/:idCliente",async(req,res)=>{
+    try{
+
+        let idCliente = req.params.idCliente;
+
+        let comprasdoClienteBanco = await Compra.findAll({
+            where:{id_cliente:idCliente}
+        })
+
+        if(!comprasdoClienteBanco)
+        {
+            return res.status(404).json({ erro: 'O cliente não possui compras!' });
+        }
+
+        let mensagem = comprasdoClienteBanco.map(compras=>({
+            nome:buscarNomeCliente(compras.id_cliente),
+            valor:compras.valor,
+            data:compras.data
+        }))
+
+        res.status(200).json(mensagem)
+    }
+    catch(erro)
+    {
+        res.status(500).json({mensagem:"Erro interno no servidor!"})
+    }
+})
+
 compra.post("/compras",async(req,res)=>
 {
     try{
