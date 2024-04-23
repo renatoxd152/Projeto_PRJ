@@ -118,6 +118,13 @@ compra.delete("/compras/:id",async(req,res)=>
             return res.status(404).json({mensagem:"A compra não foi encontrado!"})
         }
 
+        await ItensCompra.destroy({
+            where:
+            {
+                id_compra:compraparaDeletar.id
+            }
+        })
+
         await compraparaDeletar.destroy()
 
         res.status(201).json({mensagem:`Compra com id ${req.params.id} excluído com sucesso!`})
