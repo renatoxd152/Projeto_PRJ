@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../../banco/banco";
-import Produto from "../Produto/ProdutoModel";
-import Compra from "./ComprasModel";
+import sequelize from "../../banco/banco.js";
+import Produto from "../Produto/ProdutoModel.js";
+import Compra from "./ComprasModel.js";
 
 const ItensCompra = sequelize.define('itensPedido',{
     id:{

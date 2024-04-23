@@ -1,7 +1,7 @@
 import express from 'express'
-import Cliente from '../../model/Cliente/ClienteModel'
-import Compra from '../../model/Compras/ComprasModel'
-import ItensCompra from '../../model/Compras/ItensComprasModel'
+import Cliente from '../../model/Cliente/ClienteModel.js'
+import Compra from '../../model/Compras/ComprasModel.js'
+import ItensCompra from '../../model/Compras/ItensComprasModel.js'
 const compra = express()
 compra.use(express.json())
 

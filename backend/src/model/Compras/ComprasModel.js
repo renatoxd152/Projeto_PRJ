@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../../banco/banco";
-import Cliente from "../Cliente/ClienteModel";
-import Usuario from "../Usuario/UsuarioModel";
+import sequelize from "../../banco/banco.js";
+import Cliente from "../Cliente/ClienteModel.js";
+import Usuario from "../Usuario/UsuarioModel.js";
 const Compra = sequelize.define('compras',{
     id:{
         type:DataTypes.INTEGER,

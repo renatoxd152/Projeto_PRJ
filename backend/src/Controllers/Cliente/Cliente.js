@@ -26,20 +26,24 @@ cliente.get("/clientes",async(req,res)=>{
 
 cliente.post("/clientes",async(req,res)=>
 {
-    try{
-        const{nome_completo,email,cpf,endereco,telefone} = req.body;
+    try
+    {
+        const{nome,email,cpf,endereco,telefone} = req.body;
+       
         const clienteNovo = await Cliente.create({
-            nome_completo,
+            nome,
             email,
             cpf,
             endereco,
             telefone
         })
-
-        res.status(201).json({mensagem:`O Cliente ${clienteNovo.nome_completo} cadastrado com sucesso!`})
+        
+        
+        res.status(201).json({mensagem:`O Cliente ${clienteNovo.nome} cadastrado com sucesso!`})
     }
     catch(erro)
     {
+        console.error(erro);
         res.status(500).json({mensagem:"Erro interno no servidor!"})
     }
     
@@ -61,7 +65,7 @@ cliente.put("/clientes/:id",async(req,res)=>
         }
         clienteparaAtualizar.nome = nome
         clienteparaAtualizar.email = email
-        clienteparaAtualizar = cpf
+        clienteparaAtualizar.cpf = cpf
         clienteparaAtualizar.endereco = endereco
         clienteparaAtualizar.telefone= telefone
 

@@ -1,5 +1,6 @@
-import express from 'express'
-import Usuario from '../../model/Usuario/UsuarioModel.js'
+import bcrypt from "bcrypt";
+import express from 'express';
+import Usuario from '../../model/Usuario/UsuarioModel.js';
 const usuario = express()
 usuario.use(express.json())
 
@@ -8,33 +9,56 @@ usuario.post("/usuarios",async(req,res)=>
     try{
         const {cpf,senha,tipo} = req.body;
 
+        const usuario = await Usuario.findOne(
+            {
+                where:{
+                    cpf:cpf
+                }
+            }
+        )
+
+        if(usuario)
+        {
+            return res.status(400).json({mensagem:"Usuário já existe"})
+        }
+
+        const hashedPassword = await bcrypt.hash(senha, 10);
+
         await Usuario.create({
-            cpf,senha,tipo
+            cpf:cpf,senha:hashedPassword,tipo:tipo
         }) 
+        
+
 
         res.status(200).json({mensagem:"O usuário foi cadastrado com sucesso"})
     }
     catch(erro)
     {
+        console.log(erro)
         res.status(500).json({mensagem:"Erro interno no servidor!"})
     }
     
 })
 
+
 usuario.put("/usuarios/:id",async(req,res)=>
 {
     try
     {
-        let index = req.params.id
+        let index = req.params.id;
+        let{cpf,senha,tipo} = req.body;
+
         let usuarioparaAtualizar = await Usuario.findByPk(index);
+
         if(!usuarioparaAtualizar)
         {
             return res.status(404).json({mensagem:"Esse usuário não foi encontrado!"})
         }
-        let{cpf,senha,tipo} = req.body;
-    
+        
+        const hashedPassword = await bcrypt.hash(senha, 10);
+
         usuarioparaAtualizar.cpf = cpf
-        usuarioparaAtualizar.senha = senha
+        usuarioparaAtualizar.senha = hashedPassword
         usuarioparaAtualizar.tipo = tipo
     
     

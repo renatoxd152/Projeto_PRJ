@@ -1,5 +1,5 @@
 import express from 'express'
-import ItensCompra from '../../model/Compras/ItensComprasModel'
+import ItensCompra from '../../model/Compras/ItensComprasModel.js'
 const itens_compra = express()
 itens_compra.use(express.json())
 
