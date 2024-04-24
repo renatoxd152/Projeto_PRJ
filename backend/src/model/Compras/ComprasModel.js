@@ -15,7 +15,8 @@ const Compra = sequelize.define('compras',{
     },
     data:{
         type:DataTypes.DATE,
-        allowNull:false
+        allowNull:false,
+        defaultValue: DataTypes.NOW
     }
 })
 

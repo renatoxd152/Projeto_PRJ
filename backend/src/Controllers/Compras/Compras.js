@@ -2,6 +2,7 @@ import express from 'express'
 import Cliente from '../../model/Cliente/ClienteModel.js'
 import Compra from '../../model/Compras/ComprasModel.js'
 import ItensCompra from '../../model/Compras/ItensComprasModel.js'
+import Usuario from '../../model/Usuario/UsuarioModel.js'
 const compra = express()
 compra.use(express.json())
 
@@ -36,7 +37,7 @@ compra.get("/compras/:idCliente",async(req,res)=>{
 
         if(!comprasdoClienteBanco)
         {
-            return res.status(404).json({ erro: 'O cliente não possui compras!' });
+            return res.status(404).json({ erro: 'O cliente não possui compras!'});
         }
 
         let mensagem = comprasdoClienteBanco.map(compras=>({
@@ -56,10 +57,23 @@ compra.get("/compras/:idCliente",async(req,res)=>{
 compra.post("/compras",async(req,res)=>
 {
     try{
-        const{valor_compra,data_compra,id_cliente,id_admin,produtos} = req.body
+        const{valor_compra,id_cliente,id_admin,produtos} = req.body
+        
+        let novaCompra = await Compra.create({valor:valor_compra,id_cliente,id_admin})
+        const cliente = await Cliente.findByPk(id_cliente)
 
-        let novaCompra = await Compra.create({valor_compra,data_compra,id_cliente,id_admin})
-    
+        const admin = await Usuario.findOne({
+            where:
+            {
+                id:id_admin,
+                tipo:"ADMIN"
+            }
+        })
+        if(!cliente)
+            return res.status(404).json({mensagem:"Esse cliente não foi encontrado!"})
+        if(!admin)
+            return res.status(404).json({mensagem:"Esse admin não foi encontrado!"})
+
         await Promise.all(
             produtos.map(async(produto)=>{
                 await ItensCompra.create(
@@ -78,6 +92,7 @@ compra.post("/compras",async(req,res)=>
     }
     catch(error)
     {
+        console.log(error)
         res.status(500).json({mensagem:"Erro interno no servidor"})
     }
 })
@@ -86,15 +101,20 @@ compra.put("/compras/:id",async(req,res)=>{
     try{
         let index = req.params.id
 
-        let {valor,data,id_cliente,id_admin} = req.body
+        let {valor,id_cliente,id_admin} = req.body
         let compraparaAtualizar = await Compra.findByPk(index)
+
+        if(!cliente)
+            return res.status(404).json({mensagem:"Esse cliente não foi encontrado!"})
+        if(!admin)
+            return res.status(404).json({mensagem:"Esse admin não foi encontrado!"})
 
         if(!compraparaAtualizar)
         {
             return res.status(404).json({mensagem:"Essa compra não foi encontrada!"})
         }
+
         compraparaAtualizar.valor = valor
-        compraparaAtualizar.data = data
         compraparaAtualizar.id_cliente = id_cliente
         compraparaAtualizar.id_admin = id_admin
 

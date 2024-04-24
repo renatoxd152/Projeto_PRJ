@@ -10,6 +10,7 @@ produto.get("/produtos",async (req,res)=>
         const produtosdoBanco = await Produto.findAll();
 
         const mensagem = produtosdoBanco.map(produto =>({
+            id:produto.id,
             nome:produto.nome,
             preco:produto.preco,
             quantidade:produto.quantidade
