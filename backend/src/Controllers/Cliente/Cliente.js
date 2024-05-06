@@ -8,6 +8,7 @@ cliente.get("/clientes",async(req,res)=>{
     try{
         const clientesdoBanco = await Cliente.findAll();
         const mensagem = clientesdoBanco.map(cliente =>({
+            id:cliente.id,
             nome:cliente.nome,
             email:cliente.email,
             cpf:cliente.cpf,

@@ -11,13 +11,15 @@ compra.get("/compras",async(req,res)=>{
     try{
         let comprasdoBanco = await Compra.findAll()
 
-        let mensagem = comprasdoBanco.map(compras=>
-        ({
-            cliente:buscarNomeCliente(compras.id_cliente),
-            valor_compra:compras.valor,
-            data:compras.data
-        }))
-
+        let mensagem = comprasdoBanco.map(async (compra) => {
+            
+            return {
+                nome: await buscarNomeCliente(compra.id_cliente),
+                valor: compra.valor,
+                data: compra.data
+            };
+        });
+        mensagem = await Promise.all(mensagem);
         res.status(200).json(mensagem)
     }
     catch(erro)
@@ -40,12 +42,15 @@ compra.get("/compras/:idCliente",async(req,res)=>{
             return res.status(404).json({ erro: 'O cliente não possui compras!'});
         }
 
-        let mensagem = comprasdoClienteBanco.map(compras=>({
-            nome:buscarNomeCliente(compras.id_cliente),
-            valor:compras.valor,
-            data:compras.data
-        }))
-
+        let mensagem = comprasdoClienteBanco.map(async compras=>{
+            
+            return{
+                nome:await buscarNomeCliente(compras.id_cliente),
+                valor:compras.valor,
+                data:compras.data
+            }
+        })
+        mensagem = await Promise.all(mensagem);
         res.status(200).json(mensagem)
     }
     catch(erro)

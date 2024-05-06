@@ -40,7 +40,23 @@ usuario.post("/usuarios",async(req,res)=>
     
 })
 
+usuario.get("/usuarios",async(req,res)=>
+{
+    try{
+        const usuariodoBanco = await Usuario.findAll();
 
+        const mensagem = usuariodoBanco.map(usuarios=>({
+            id:usuarios.id,
+            tipo:usuarios.tipo
+        }))
+        res.status(200).send(mensagem)
+    }
+    catch(erro)
+    {
+        res.status(500).json({mensagem:"Erro interno no servidor!"})
+    }
+
+})
 usuario.put("/usuarios/:id",async(req,res)=>
 {
     try
