@@ -27,8 +27,10 @@ const Cliente = sequelize.define('clientes',{
     telefone:{
         type:DataTypes.STRING,
         allowNull:false
-    }
-})
+    }},
+    {
+        timestamps:false
+    })
 
 sequelize.sync({ force: false }).then(() => {
     console.log('Tabela cliente sincronizado');

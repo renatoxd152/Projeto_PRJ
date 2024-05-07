@@ -15,10 +15,11 @@ const Compra = sequelize.define('compras',{
     },
     data:{
         type:DataTypes.DATE,
-        allowNull:false,
-        defaultValue: DataTypes.NOW
+        allowNull:false
     }
-})
+},{
+    timestamps: false
+});
 
 Compra.belongsTo(Cliente,{
     foreignKey:'id_cliente'

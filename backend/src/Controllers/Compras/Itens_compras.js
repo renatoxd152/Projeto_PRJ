@@ -20,6 +20,16 @@ itens_compra.get("/itensCompras/:id",async(req,res)=>{
     }
 })
 
+itens_compra.get("/itensCompras/",async(req,res)=>{
+    try {
+        let itensdaCompra = await ItensCompra.findAll()
+        res.status(200).json(itensdaCompra)
+    } catch (error) {
+        res.send(500).json({mensagem:"Erro interno no servidor!"})
+    }
+})
+
+
 
 itens_compra.put("/itensCompras/:id",(req,res)=>{
     let index = buscarIndexItensCompra(req.params.id)

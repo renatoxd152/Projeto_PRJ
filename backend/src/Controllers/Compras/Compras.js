@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import express from 'express'
 import Cliente from '../../model/Cliente/ClienteModel.js'
 import Compra from '../../model/Compras/ComprasModel.js'
@@ -16,7 +17,7 @@ compra.get("/compras",async(req,res)=>{
             return {
                 nome: await buscarNomeCliente(compra.id_cliente),
                 valor: compra.valor,
-                data: compra.data
+                data:format(compra.data, 'yyyy-MM-dd HH:mm:ss')
             };
         });
         mensagem = await Promise.all(mensagem);
@@ -47,7 +48,7 @@ compra.get("/compras/:idCliente",async(req,res)=>{
             return{
                 nome:await buscarNomeCliente(compras.id_cliente),
                 valor:compras.valor,
-                data:compras.data
+                data:format(compra.data, 'yyyy-MM-dd HH:mm:ss')
             }
         })
         mensagem = await Promise.all(mensagem);
@@ -62,10 +63,8 @@ compra.get("/compras/:idCliente",async(req,res)=>{
 compra.post("/compras",async(req,res)=>
 {
     try{
+       
         const{valor_compra,id_cliente,id_admin,produtos} = req.body
-        
-        let novaCompra = await Compra.create({valor:valor_compra,id_cliente,id_admin})
-        const cliente = await Cliente.findByPk(id_cliente)
 
         const admin = await Usuario.findOne({
             where:
@@ -74,11 +73,18 @@ compra.post("/compras",async(req,res)=>
                 tipo:"ADMIN"
             }
         })
+        const cliente = await Cliente.findByPk(id_cliente)
+
         if(!cliente)
             return res.status(404).json({mensagem:"Esse cliente não foi encontrado!"})
         if(!admin)
             return res.status(404).json({mensagem:"Esse admin não foi encontrado!"})
 
+        const data = new Date();
+        const data_compra = format(data, 'yyyy-MM-dd HH:mm:ss');
+        let novaCompra = await Compra.create({valor:valor_compra,id_cliente,id_admin,data:data_compra})
+
+        
         await Promise.all(
             produtos.map(async(produto)=>{
                 await ItensCompra.create(

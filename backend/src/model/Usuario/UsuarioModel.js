@@ -21,9 +21,10 @@ const Usuario = sequelize.define('usuarios',
     tipo:{
         type:DataTypes.ENUM('COMUM','ADMIN'),
         allowNull:false
-    }
-
-})
+    }},
+    {
+        timestamps:false
+    })
 
 sequelize.sync({ force: false }).then(() => {
     console.log('Tabela usuário sincronizado');

@@ -25,8 +25,10 @@ const Produto = sequelize.define('produtos',
     {
         type:DataTypes.INTEGER,
         allowNull:false
-    }
-})
+    }},
+    {
+        timestamps:false
+    })
 
 sequelize.sync({ force: false }).then(() => {
     console.log('Tabela produto sincronizado');

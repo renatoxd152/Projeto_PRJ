@@ -18,6 +18,10 @@ const ItensCompra = sequelize.define('itensPedido',{
         type:DataTypes.FLOAT,
         allowNull:false
     }
+},{
+    
+    timestamps: false
+    
 })
 
 ItensCompra.belongsTo(Compra,{
