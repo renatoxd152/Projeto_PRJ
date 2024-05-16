@@ -1,16 +1,17 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Cadastrar from './componentes/Usuario/Cadastrar.js';
-import { AuthProvider } from './utils/AuthContext';
-import { PrivateRoute } from './utils/PrivateRoute.js';
+import {Cadastrar} from './componentes/Usuario/Cadastrar.js';
+
+import { BrowserRouter } from 'react-router-dom';
 function App() {
   return (
-    
-   <AuthProvider>
+  
+    <BrowserRouter>
       <Routes>
-        <Route path='/cadastrar' element={<PrivateRoute><Cadastrar/></PrivateRoute>}/>
+        <Route path='/cadastrar' element={<Cadastrar/>}/>
       </Routes>
-   </AuthProvider>
+    </BrowserRouter>
+  
   );
 }
 
