@@ -2,19 +2,66 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Link, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import React from "react";
 
-export const Nav = () =>
-{
-    return(
+export const Nav = () => {
+    return (
         <Flex>
-            <Box bg="#0f75fa" w="100%" minH="5vh" color="black" >
+            <Box bg="#0f75fa" w="100%" minH="5vh" color="black" p={4} alignItems="center">
                 <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon/>}>Compras</MenuButton>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} mr={4}>
+                        Compras
+                    </MenuButton>
                     <MenuList>
-                        <MenuItem><Link href='/cadastrarCompras'>Cadastrar Compras</Link></MenuItem>
-                        <MenuItem><Link href='/compras'>Compras cadastradas</Link></MenuItem>
+                        <MenuItem>
+                            <Link href='/cadastrarCompras'>Cadastrar compras</Link>
+                        </MenuItem>
+                        <MenuItem>
+                            <Link href='/compras'>Compras cadastradas</Link>
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} mr={4}>
+                        Produtos
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem>
+                            <Link href='/cadastrarProduto'>Cadastrar produto</Link>
+                        </MenuItem>
+                        <MenuItem>
+                            Produtos cadastrados
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />} mr={4}>
+                        Clientes
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem>
+                            Cadastrar cliente
+                        </MenuItem>
+                        <MenuItem>
+                            Clientes cadastrados
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                        Relatórios
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem>
+                            Relatório de compras por mês
+                        </MenuItem>
+                        <MenuItem>
+                            Relatório de clientes com mais compras por mês
+                        </MenuItem>
                     </MenuList>
                 </Menu>
             </Box>
         </Flex>
-    )
+    );
 }
