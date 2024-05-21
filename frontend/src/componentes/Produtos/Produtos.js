@@ -19,7 +19,7 @@ export const Produtos = () =>
     {
         setQuantidade(event.target.value);
     }
-    const handleCadatrarProduto = () =>
+    const handleCadastrarProduto = () =>
     {
 
     }
@@ -43,7 +43,7 @@ export const Produtos = () =>
                         <Input type="number" value={quantidade} onChange={handleQuantidade}></Input>
                     </Flex>
 
-                    <Button colorScheme="blue" onClick={handleCadatrarProduto} m="4">Cadastrar Produto</Button>
+                    <Button colorScheme="blue" onClick={handleCadastrarProduto} m="4">Cadastrar Produto</Button>
                 </Flex>
                 
             </Flex>

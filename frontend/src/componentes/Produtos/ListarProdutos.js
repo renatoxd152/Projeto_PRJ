@@ -9,7 +9,7 @@ export const ListarProdutos = () =>
             <Nav/>
             <TableContainer>
                 <Table>
-                    <TableCaption>Produtos cadastrados</TableCaption>
+                    <TableCaption placement="top">Produtos cadastrados</TableCaption>
                     <Thead>
                         <Th>Nome</Th>
                         <Th>Quantidade</Th>

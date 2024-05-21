@@ -40,10 +40,11 @@ export const Nav = () => {
                     </MenuButton>
                     <MenuList>
                         <MenuItem>
-                            Cadastrar cliente
+                        <Link href='/cadastrarCliente'>Cadastrar cliente</Link>
                         </MenuItem>
                         <MenuItem>
-                            Clientes cadastrados
+                            <Link href='/listarClientes'>Clientes cadastrados</Link>
+                            
                         </MenuItem>
                     </MenuList>
                 </Menu>
