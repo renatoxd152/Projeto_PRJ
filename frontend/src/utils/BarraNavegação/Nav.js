@@ -29,7 +29,7 @@ export const Nav = () => {
                             <Link href='/cadastrarProduto'>Cadastrar produto</Link>
                         </MenuItem>
                         <MenuItem>
-                            Produtos cadastrados
+                        <Link href='/listarProdutos'>Produtos cadastrados</Link>
                         </MenuItem>
                     </MenuList>
                 </Menu>
