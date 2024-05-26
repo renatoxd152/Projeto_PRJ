@@ -11,9 +11,11 @@ export const ListarProdutos = () =>
                 <Table>
                     <TableCaption placement="top">Produtos cadastrados</TableCaption>
                     <Thead>
-                        <Th>Nome</Th>
-                        <Th>Quantidade</Th>
-                        <Th>Preço</Th>
+                        <Tr>
+                            <Th>Nome</Th>
+                            <Th>Quantidade</Th>
+                            <Th>Preço</Th>
+                        </Tr>
                     </Thead>
                     <Tbody>
                         <Tr>

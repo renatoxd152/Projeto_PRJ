@@ -11,11 +11,13 @@ export const ListarClientes = ()=>
                     <Table>
                         <TableCaption placement="top">Clientes cadastrados</TableCaption>
                         <Thead>
-                            <Th>Nome</Th>
-                            <Th>Email</Th>
-                            <Th>CPF</Th>
-                            <Th>Endereço</Th>
-                            <Th>Telefone</Th>
+                            <Tr>
+                                <Th>Nome</Th>
+                                <Th>Email</Th>
+                                <Th>CPF</Th>
+                                <Th>Endereço</Th>
+                                <Th>Telefone</Th>
+                            </Tr>
                         </Thead>
                         <Tbody>
                             <Tr>

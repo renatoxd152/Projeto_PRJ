@@ -108,8 +108,10 @@ export const Compras = () => {
                             <Table>
                                 <TableCaption placement="top">Produtos da compra</TableCaption>
                                 <Thead>
-                                    <Th>Produto</Th>
-                                    <Th>Preço</Th>
+                                    <Tr>
+                                        <Th>Produto</Th>
+                                        <Th>Preço</Th>
+                                    </Tr>
                                 </Thead>
                                 <Tbody>
                                 {produtos.map((produto, index) => (
