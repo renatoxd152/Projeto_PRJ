@@ -12,7 +12,7 @@ function App() {
   
     <BrowserRouter>
       <Routes>
-        <Route path='/cadastrar' element={<Cadastrar/>}/>
+        <Route path='/' element={<Cadastrar/>}/>
         <Route path='/compras' element={<Compras/>}/>
         <Route path='/cadastrarCompras' element={<CadastrarCompra/>}/>
         <Route path='/cadastrarProduto' element={<Produtos/>}/>
