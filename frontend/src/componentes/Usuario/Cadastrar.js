@@ -1,16 +1,19 @@
 import { Alert, AlertIcon, AlertTitle, Button, Flex, Input, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../utils/AuthContext';
 export const Cadastrar = () =>
 {
     const[cpf,setCPF] = useState("");
     const[senha,setSenha] = useState("");
     const[senhaConfirmar,setSenhaConfirmar] = useState("");
-    const[userType,setUserType] = useState("comum");
+    const[userType,setUserType] = useState("COMUM");
     const[isloged,setLogin] = useState(false);
+    const {login} = useAuth();
     const navigate = useNavigate();
     const[erro,setErro] = useState("")
     const[mensagem,setMensagem] = useState("")
+    
     const handleCPF = (event) =>
     {
         setCPF(event.target.value);
@@ -24,26 +27,60 @@ export const Cadastrar = () =>
         setSenhaConfirmar(event.target.value);
     }
     const handleLogin = () => {
+        setCPF("");
+        setSenha("");
+        setSenhaConfirmar("");
+        setMensagem("");
+        setErro("");
         setLogin(prevState => !prevState);
     }
 
     const handleLogar = async () =>
     {
+        if(!cpf || !senha)
+        {
+            setErro("Preencha os campos corretamente!");
+            return;
+        }
+        if (senha !== senhaConfirmar) {
+            setErro("As senhas não correspondem!");
+            return;
+        }
         if(isloged)
         {
-            navigate("/compras")
+            try
+            {
+                const response = await fetch('http://localhost:3000/login',
+                    {
+                        method:'GET',
+                        headers:
+                        {
+                            'Content-Type': 'application/json'
+                        },
+                        body:JSON.stringify({cpf:cpf,senha:senha})
+
+                    }
+                )
+
+                const data = await response.json();
+                if (data.token) {
+                    login(data.token);
+                    navigate("/compras")
+                    setMensagem("");
+                    setErro("");
+                } else {
+                    setErro(data.mensagem);
+                    setMensagem("");
+                }
+            }
+            catch(error)
+            {
+                console.error(error);
+            }
+            
         }
         else
         {
-            if(!cpf || !senha || !userType)
-            {
-                setErro("Preencha os campos corretamente!");
-                return;
-            }
-            if (senha !== senhaConfirmar) {
-                setErro("As senhas não correspondem!");
-                return;
-            }
             try
             {
                 const response = await fetch('http://localhost:3000/usuarios',

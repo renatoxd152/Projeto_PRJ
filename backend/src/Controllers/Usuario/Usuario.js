@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import Usuario from '../../model/Usuario/UsuarioModel.js';
+import config from '../../utils/config.js';
 const usuario = express()
 usuario.use(express.json())
 
@@ -108,5 +110,32 @@ usuario.delete("/usuarios/:id",async(req,res)=>
         res.status(500).json({mensagem:"Erro interno no servidor!"})
     }
 })
+
+
+usuario.get('/login', async (req, res) => {
+    const { cpf, senha } = req.body;
+
+    try {
+      
+      const user = await Usuario.findOne({
+          where: { cpf: cpf},
+        });
+  
+      if (!user) {
+        return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+      }
+  
+      
+      const passwordMatch = await bcrypt.compare(senha, user.senha);
+      if (!passwordMatch) {
+        return res.status(401).json({ mensagem: 'Credenciais inválidas' });
+      }
+      const token = jwt.sign({ userId: user.id }, config, { expiresIn: '3h' });
+      res.json({token});
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ mensagem: 'Erro ao fazer login' });
+    }
+  });
 
 export default usuario

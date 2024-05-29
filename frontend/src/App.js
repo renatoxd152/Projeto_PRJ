@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { PrivateRoute } from '../src/utils/PrivateRoute.js';
 import './App.css';
 import { CadastrarCliente } from './componentes/Clientes/CadastrarCliente.js';
 import { ListarClientes } from './componentes/Clientes/ListarClientes.js';
@@ -13,7 +14,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Cadastrar/>}/>
-        <Route path='/compras' element={<Compras/>}/>
+        <Route path='/compras' element={<PrivateRoute><Compras/></PrivateRoute>}/>
         <Route path='/cadastrarCompras' element={<CadastrarCompra/>}/>
         <Route path='/cadastrarProduto' element={<Produtos/>}/>
         <Route path='/listarProdutos' element={<ListarProdutos/>}/>
