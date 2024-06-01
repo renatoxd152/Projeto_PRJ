@@ -112,7 +112,7 @@ usuario.delete("/usuarios/:id",async(req,res)=>
 })
 
 
-usuario.get('/login', async (req, res) => {
+usuario.post('/login', async (req, res) => {
     const { cpf, senha } = req.body;
 
     try {

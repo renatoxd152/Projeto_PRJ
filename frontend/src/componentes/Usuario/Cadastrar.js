@@ -42,17 +42,13 @@ export const Cadastrar = () =>
             setErro("Preencha os campos corretamente!");
             return;
         }
-        if (senha !== senhaConfirmar) {
-            setErro("As senhas não correspondem!");
-            return;
-        }
         if(isloged)
         {
             try
             {
                 const response = await fetch('http://localhost:3000/login',
                     {
-                        method:'GET',
+                        method:'POST',
                         headers:
                         {
                             'Content-Type': 'application/json'
@@ -81,6 +77,10 @@ export const Cadastrar = () =>
         }
         else
         {
+            if (senha !== senhaConfirmar) {
+                setErro("As senhas não correspondem!");
+                return;
+            }
             try
             {
                 const response = await fetch('http://localhost:3000/usuarios',
@@ -143,19 +143,23 @@ export const Cadastrar = () =>
                         <Text>Digite a senha</Text>
                         <Input type='password' value={senha} onChange={handleSenha}></Input>
                     </Flex>
-                    <Flex direction="column" width="100%" mb="4">
-                        <Text>Digite a senha novamente</Text>
-                        <Input type='password' value={senhaConfirmar} onChange={handleSenhaConfirmar}></Input>
-                    </Flex>
+                    
                     {
                         !isloged &&
                         <Flex direction="column" width="100%" mb="4">
-                            <Text>Escolha o tipo de usuário</Text>
-                            <RadioGroup value={userType} onChange={setUserType}>
-                                <Radio value='COMUM'>Comum</Radio>
-                                <Radio value='ADMIN'>Admin</Radio>
-                            </RadioGroup>
+                            <Flex direction="column" width="100%" mb="4">
+                                <Text>Escolha o tipo de usuário</Text>
+                                <RadioGroup value={userType} onChange={setUserType}>
+                                    <Radio value='COMUM'>Comum</Radio>
+                                    <Radio value='ADMIN'>Admin</Radio>
+                                </RadioGroup>
+                            </Flex>
+                            <Flex direction="column" width="100%" mb="4">
+                                <Text>Digite a senha novamente</Text>
+                                <Input type='password' value={senhaConfirmar} onChange={handleSenhaConfirmar}></Input>
+                            </Flex>
                         </Flex>
+                       
                     }
                     <Button colorScheme='blue' onClick={handleLogar} width="100%">{isloged ? "Login" : "Cadastrar"}</Button>
                 </Flex>

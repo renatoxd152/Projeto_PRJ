@@ -1,6 +1,7 @@
-import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import { Table, TableCaption, TableContainer, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
 import { Nav } from "../../utils/BarraNavegação/Nav";
+import { ProdutosBanco } from "./ProdutosBanco";
 
 export const ListarProdutos = () =>
 {
@@ -17,13 +18,7 @@ export const ListarProdutos = () =>
                             <Th>Preço</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        <Tr>
-                            <Td>Uva</Td>
-                            <Td>20</Td>
-                            <Td>3.5</Td>
-                        </Tr>
-                    </Tbody>
+                    <ProdutosBanco/>
                 </Table>
             </TableContainer>
         </>
