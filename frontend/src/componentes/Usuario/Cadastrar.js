@@ -147,16 +147,18 @@ export const Cadastrar = () =>
                     {
                         !isloged &&
                         <Flex direction="column" width="100%" mb="4">
+    
+                            <Flex direction="column" width="100%" mb="4">
+                                <Text>Digite a senha novamente</Text>
+                                <Input type='password' value={senhaConfirmar} onChange={handleSenhaConfirmar}></Input>
+                            </Flex>
+
                             <Flex direction="column" width="100%" mb="4">
                                 <Text>Escolha o tipo de usuário</Text>
                                 <RadioGroup value={userType} onChange={setUserType}>
                                     <Radio value='COMUM'>Comum</Radio>
                                     <Radio value='ADMIN'>Admin</Radio>
                                 </RadioGroup>
-                            </Flex>
-                            <Flex direction="column" width="100%" mb="4">
-                                <Text>Digite a senha novamente</Text>
-                                <Input type='password' value={senhaConfirmar} onChange={handleSenhaConfirmar}></Input>
                             </Flex>
                         </Flex>
                        
