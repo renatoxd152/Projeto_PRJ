@@ -1,8 +1,8 @@
 import { Button, Flex, Grid, Input, Select, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import validator from 'validator';
 import { Nav } from "../../utils/BarraNavegação/Nav";
 import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
-
 export const CadastrarCliente = () => {
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
@@ -52,10 +52,37 @@ export const CadastrarCliente = () => {
         setCep(event.target.value);
     };
 
-    const handleCadastrarCliente = (event) => {
+    const handleCadastrarCliente = async () => {
         if (!nome || !email || !cpf || !telefone || !cep || !rua || !bairro || !estado || !cidade || !numero) {
             setErro("Campos obrigatórios não preenchidos");
+            setMensagem("")
             return;
+        }
+        else if (!validator.isEmail(email)) {
+            setErro("Digite um email válido!");
+            setMensagem("");
+        }
+        else{
+
+            try {
+                const response = await fetch('http://localhost:3000/clientes',
+                {
+                    method:'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify({nome:nome,email:email,cpf:cpf,telefone:telefone,
+                        cep:cep,rua:rua,bairro:bairro,estado:estado,cidade:cidade,numero:numero})
+                }
+                
+                )
+                const data = await response.json();
+                setMensagem(data.mensagem);
+                setErro("");
+                
+            } catch (error) {
+                console.log(error)
+            }
         }
     };
     

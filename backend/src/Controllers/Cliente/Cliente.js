@@ -35,7 +35,15 @@ cliente.post("/clientes",async(req,res)=>
     try
     {
         const{nome,email,cpf,telefone,rua,bairro,cidade,estado,numero,cep} = req.body;
-       
+        const existeEmail = await Cliente.findOne(
+            {
+                where:{
+                    email:email
+                }
+            }
+        )
+        if(existeEmail)
+            return res.status(400).json({mensagem:"Esse email já está cadastrado!"})
         const clienteNovo = await Cliente.create({
             nome,
             email,

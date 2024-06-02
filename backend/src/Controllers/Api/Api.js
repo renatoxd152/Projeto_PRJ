@@ -45,5 +45,19 @@ api.get('/cidades/:estado', async (req, res) => {
    
 });
 
+api.get('/cidade/:cidade', async (req, res) => {
+    try {
+        const {cidade} = req.params;
+       
+        const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/municipios/${cidade}`);
+        const data = await response.json();
+        res.json(data);
+       
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ mensagem: "Não foi possível buscar a cidade devido a um erro interno no servidor da API" });
+    }
+   
+});
 
 export default api;

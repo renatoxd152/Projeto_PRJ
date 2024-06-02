@@ -20,10 +20,6 @@ const Cliente = sequelize.define('clientes', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    endereco: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
     telefone: {
         type: DataTypes.STRING,
         allowNull: false
@@ -41,7 +37,7 @@ const Cliente = sequelize.define('clientes', {
         allowNull: false
     },
     estado: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     numero: {

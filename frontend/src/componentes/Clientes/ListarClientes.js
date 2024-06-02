@@ -1,6 +1,7 @@
-import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import { Table, TableCaption, TableContainer, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
 import { Nav } from "../../utils/BarraNavegação/Nav";
+import { ClientesBanco } from "./ClientesBanco";
 export const ListarClientes = ()=>
 {
     return(
@@ -15,19 +16,16 @@ export const ListarClientes = ()=>
                                 <Th>Nome</Th>
                                 <Th>Email</Th>
                                 <Th>CPF</Th>
-                                <Th>Endereço</Th>
                                 <Th>Telefone</Th>
+                                <Th>Rua</Th>
+                                <Th>Bairro</Th>
+                                <Th>Estado</Th>
+                                <Th>Cidade</Th>
+                                <Th>Número</Th>
+                                <Th>CEP</Th>
                             </Tr>
                         </Thead>
-                        <Tbody>
-                            <Tr>
-                                <Td>João</Td>
-                                <Td>joao@gmail.com</Td>
-                                <Td>1231231231232</Td>
-                                <Td>Rua Augusto Ferreira</Td>
-                                <Td>1641314422</Td>
-                            </Tr>
-                        </Tbody>
+                       <ClientesBanco/>
                     </Table>
             </TableContainer>
         </>
