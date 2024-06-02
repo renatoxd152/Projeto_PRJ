@@ -5,5 +5,5 @@ export function PrivateRoute({children})
 {
     const user = localStorage.getItem('token');
 
-    return user ? children : <Navigate to="/cadastrar"/>
+    return user ? children : <Navigate to="/"/>
 }

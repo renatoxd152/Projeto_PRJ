@@ -12,8 +12,13 @@ cliente.get("/clientes",async(req,res)=>{
             nome:cliente.nome,
             email:cliente.email,
             cpf:cliente.cpf,
-            endereco:cliente.endereco,
-            telefone:cliente.telefone
+            telefone:cliente.telefone,
+            rua:cliente.rua,
+            bairro:cliente.bairro,
+            cidade:cliente.cidade,
+            estado:cliente.estado,
+            numero:cliente.numero,
+            cep:cliente.cep
         }))
         res.status(200).json(mensagem);
     }
@@ -29,14 +34,19 @@ cliente.post("/clientes",async(req,res)=>
 {
     try
     {
-        const{nome,email,cpf,endereco,telefone} = req.body;
+        const{nome,email,cpf,telefone,rua,bairro,cidade,estado,numero,cep} = req.body;
        
         const clienteNovo = await Cliente.create({
             nome,
             email,
             cpf,
-            endereco,
-            telefone
+            telefone,
+            rua,
+            bairro,
+            cidade,
+            estado,
+            numero,
+            cep
         })
         
         
@@ -56,7 +66,7 @@ cliente.put("/clientes/:id",async(req,res)=>
     try{
 
         let index = req.params.id;
-        let {nome,email,cpf,endereco,telefone} = req.body;
+        let {nome,email,cpf,rua,bairro,cidade,estado,numero,cep,telefone} = req.body;
 
         let clienteparaAtualizar = await Cliente.findByPk(index);
 
@@ -67,8 +77,13 @@ cliente.put("/clientes/:id",async(req,res)=>
         clienteparaAtualizar.nome = nome
         clienteparaAtualizar.email = email
         clienteparaAtualizar.cpf = cpf
-        clienteparaAtualizar.endereco = endereco
         clienteparaAtualizar.telefone= telefone
+        clienteparaAtualizar.rua = rua
+        clienteparaAtualizar.bairro = bairro
+        clienteparaAtualizar.cidade = cidade
+        clienteparaAtualizar.numero = numero
+        clienteparaAtualizar.cep = cep
+        clienteparaAtualizar.estado = estado
 
         await clienteparaAtualizar.save();
 
