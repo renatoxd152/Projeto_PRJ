@@ -26,35 +26,39 @@ export const Produtos = () =>
     {
         if(!nome || !preco || !quantidade) 
             setErro("Preencha todos os campos corretamente!");
-        try {
-            const response = await fetch('http://localhost:3000/produtos',
-                {
-                    method:'POST',
-                    headers:{
-                        'Content-Type': 'application/json'
+        else
+        {
+            try {
+                const response = await fetch('http://localhost:3000/produtos',
+                    {
+                        method:'POST',
+                        headers:{
+                            'Content-Type': 'application/json'
+                        }
+                        ,body:JSON.stringify({nome:nome,preco:preco,quantidade:quantidade})
                     }
-                    ,body:JSON.stringify({nome:nome,preco:preco,quantidade:quantidade})
+                )
+    
+                const data = await response.json();
+                if (response.ok) {
+                    setMensagem(data.mensagem);
+                    setErro("");
+                } else {
+                    setErro(data.erro);
+                    setMensagem("");
                 }
-            )
-
-            const data = await response.json();
-            if (response.ok) {
-                setMensagem(data.mensagem);
-                setErro("");
-            } else {
-                setErro(data.erro);
-                setMensagem("");
+                
+            } catch (error) {
+                
             }
-            
-        } catch (error) {
-            
         }
+        
         
     }
     return(
         <>
             <Nav/>
-        <Flex minH="100vh" width="100%" align="center" justify="center">
+            <Flex minH="100vh" width="100%" align="center" justify="center">
                 
                 <Flex direction="column">
                     <Mensagem erro={erro} mensagem={mensagem}/>

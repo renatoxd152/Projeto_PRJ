@@ -10,6 +10,12 @@ const Usuario = sequelize.define('usuarios',
         allowNull:false,
         primaryKey:true
     },
+    nome:
+    {
+        type:DataTypes.STRING,
+        allowNull:false
+    }
+    ,
     cpf:{
         type:DataTypes.STRING(11),
         allowNull:false

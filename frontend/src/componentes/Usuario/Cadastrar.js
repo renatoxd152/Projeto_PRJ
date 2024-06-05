@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../utils/AuthContext';
 export const Cadastrar = () =>
 {
+    const[nome,setNome] = useState("")
     const[cpf,setCPF] = useState("");
     const[senha,setSenha] = useState("");
     const[senhaConfirmar,setSenhaConfirmar] = useState("");
@@ -19,6 +20,10 @@ export const Cadastrar = () =>
         setCPF(event.target.value);
     }
 
+    const handleNome = (event) =>
+    {
+        setNome(event.target.value)
+    }
 
     const handleSenha = (event) =>{
         setSenha(event.target.value);
@@ -28,6 +33,7 @@ export const Cadastrar = () =>
     }
     const handleLogin = () => {
         setCPF("");
+        setNome("");
         setSenha("");
         setSenhaConfirmar("");
         setMensagem("");
@@ -81,6 +87,12 @@ export const Cadastrar = () =>
                 setErro("As senhas não correspondem!");
                 return;
             }
+            if(!senhaConfirmar || !nome)
+            {
+                setErro("Preencha os campos corretamente!");
+                setMensagem("")
+                return;
+            }
             try
             {
                 const response = await fetch('http://localhost:3000/usuarios',
@@ -90,7 +102,7 @@ export const Cadastrar = () =>
                         {
                             'Content-Type': 'application/json'
                         },
-                        body:JSON.stringify({cpf:cpf,senha:senha,tipo:userType})
+                        body:JSON.stringify({cpf:cpf,senha:senha,tipo:userType,nome:nome})
 
                     }
                 )
@@ -139,6 +151,15 @@ export const Cadastrar = () =>
                         <Text>Digite seu CPF</Text>
                         <Input type='number' value={cpf} onChange={handleCPF}></Input>
                     </Flex>
+                    {
+                        !isloged &&
+                        <Flex direction="column" width="100%" mb="4">
+                            <Text>Digite o nome</Text>
+                            <Input type='text' value={nome} onChange={handleNome}></Input>
+                        </Flex>
+
+                    }
+                    
                     <Flex direction="column" width="100%" mb="4">
                         <Text>Digite a senha</Text>
                         <Input type='password' value={senha} onChange={handleSenha}></Input>

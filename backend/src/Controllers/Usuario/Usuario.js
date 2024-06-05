@@ -9,7 +9,7 @@ usuario.use(express.json())
 usuario.post("/usuarios",async(req,res)=>
 {
     try{
-        const {cpf,senha,tipo} = req.body;
+        const {nome,cpf,senha,tipo} = req.body;
 
         const usuario = await Usuario.findOne(
             {
@@ -27,7 +27,7 @@ usuario.post("/usuarios",async(req,res)=>
         const hashedPassword = await bcrypt.hash(senha, 10);
 
         await Usuario.create({
-            cpf:cpf,senha:hashedPassword,tipo:tipo
+            cpf:cpf,senha:hashedPassword,tipo:tipo,nome:nome
         }) 
         
 
@@ -49,6 +49,7 @@ usuario.get("/usuarios",async(req,res)=>
 
         const mensagem = usuariodoBanco.map(usuarios=>({
             id:usuarios.id,
+            nome:usuarios.nome,
             tipo:usuarios.tipo
         }))
         res.status(200).send(mensagem)
@@ -64,7 +65,7 @@ usuario.put("/usuarios/:id",async(req,res)=>
     try
     {
         let index = req.params.id;
-        let{cpf,senha,tipo} = req.body;
+        let{cpf,senha,tipo,nome} = req.body;
 
         let usuarioparaAtualizar = await Usuario.findByPk(index);
 
@@ -78,6 +79,7 @@ usuario.put("/usuarios/:id",async(req,res)=>
         usuarioparaAtualizar.cpf = cpf
         usuarioparaAtualizar.senha = hashedPassword
         usuarioparaAtualizar.tipo = tipo
+        usuarioparaAtualizar.nome = nome
     
     
         await usuarioparaAtualizar.save()

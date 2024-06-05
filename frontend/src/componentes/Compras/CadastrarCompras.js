@@ -1,14 +1,53 @@
 import { Search2Icon } from "@chakra-ui/icons";
 import { Button, Flex, Input, InputGroup, InputLeftElement, Select, Table, TableCaption, TableContainer, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Nav } from "../../utils/BarraNavegação/Nav";
 
 export const CadastrarCompra = () =>
 {
     const[busca,setBusca] = useState("");
+    const[vendedores,setVendedores] = useState([])
+    const[clientes,setClientes] = useState([])
+    const[vendedor,setVendedor] = useState("")
     const handleBusca = (event) =>
     {
         setBusca(event.target.value);
+    }
+
+    useEffect(()=>
+    {
+        const fetchVendedores = async() =>
+        {
+            try {
+                const response = await fetch('http://localhost:3000/usuarios');
+                const data = await response.json()
+                setVendedores(data);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchVendedores()
+    },[])
+
+    useEffect(()=>
+    {
+        const fetchClientes = async()=>
+        {
+            try {
+                const response = await fetch('http://localhost:3000/clientes');
+                const data = await response.json();
+                setClientes(data);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchClientes()
+    },[])
+
+
+    const handleVendedor = (event) =>
+    {
+        setVendedor(event.target.value)
     }
     const handleCadastrarCompra = () =>
     {   
@@ -24,19 +63,27 @@ export const CadastrarCompra = () =>
                         <Flex direction="column" align="flex-start" width="100%">
                             <Flex direction="column" mb={4} width="100%">
                                 <Text>Selecione um vendedor</Text>
-                                <Select placeholder="Selecione um vendedor">
-                                    <option value='1'>João</option>
-                                    <option value='2'>Augusto</option>
-                                    <option value='3'>Pedro</option>
+                                <Select placeholder="Selecione um vendedor" value={vendedor} onChange={handleVendedor}>
+                                   {
+                                   vendedores.map(vendedor=>
+                                    (
+                                        <option key={vendedor.id} value={vendedor.id}>{vendedor.nome}</option>
+                                    )
+                                   )
+                                }
                                 </Select>
                             </Flex>
 
                             <Flex direction="column" mb={4} width="100%">
                                 <Text>Selecione um cliente</Text>
                                 <Select placeholder="Selecione um cliente">
-                                    <option value='1'>Letícia</option>
-                                    <option value='2'>Nicole</option>
-                                    <option value='3'>Sandra</option>
+                                    {
+                                        clientes.map(cliente=>
+                                            (
+                                                <option key={cliente.id} value={cliente.id}>{cliente.nome}</option>
+                                            )
+                                        )
+                                    }
                                 </Select>
                             </Flex>
 
