@@ -13,7 +13,8 @@ produto.get("/produtos",async (req,res)=>
             id:produto.id,
             nome:produto.nome,
             preco:produto.preco,
-            quantidade:produto.quantidade
+            quantidade:produto.quantidade,
+            codigo:produto.codigo
         }))
 
 
@@ -27,16 +28,18 @@ produto.get("/produtos",async (req,res)=>
 
 produto.post("/produtos", async (req, res) => {
     try {
-        const { nome, preco, quantidade } = req.body;
+        const { nome, preco, quantidade, codigo } = req.body;
 
         const novoProduto = await Produto.create({
             nome,
             preco,
-            quantidade
+            quantidade,
+            codigo
         });
 
         res.status(200).json({ mensagem: `O produto ${novoProduto.nome} foi adicionado com sucesso!` });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ erro: 'Erro interno do servidor' });
     }
 });
@@ -56,6 +59,7 @@ produto.put("/produtos/:id", async (req, res) => {
         produtoParaAtualizar.nome = nome;
         produtoParaAtualizar.preco = preco;
         produtoParaAtualizar.quantidade = quantidade;
+        produtoParaAtualizar.codigo = codigo;
 
         await produtoParaAtualizar.save();
 

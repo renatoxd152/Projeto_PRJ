@@ -7,12 +7,17 @@ export const Produtos = () =>
 {
     const[nome,setNome] = useState("");
     const[preco,setPreco] = useState("");
+    const[codigo,setCodigo] = useState("")
     const[quantidade,setQuantidade] = useState("");
     const[mensagem,setMensagem] = useState("");
     const[erro,setErro] = useState("");
     const handleNome = (event) =>
     {
         setNome(event.target.value);
+    }
+    const handleCodigo = (event) =>
+    {
+        setCodigo(event.target.value)
     }
     const handlePreco = (event) =>
     {
@@ -24,7 +29,7 @@ export const Produtos = () =>
     }
     const handleCadastrarProduto = async () =>
     {
-        if(!nome || !preco || !quantidade) 
+        if(!nome || !preco || !quantidade || !codigo) 
             setErro("Preencha todos os campos corretamente!");
         else
         {
@@ -35,7 +40,7 @@ export const Produtos = () =>
                         headers:{
                             'Content-Type': 'application/json'
                         }
-                        ,body:JSON.stringify({nome:nome,preco:preco,quantidade:quantidade})
+                        ,body:JSON.stringify({nome:nome,preco:preco,quantidade:quantidade,codigo:codigo})
                     }
                 )
     
@@ -66,6 +71,10 @@ export const Produtos = () =>
                     <Flex direction="column">
                         <Text>Digite o nome do produto</Text>
                         <Input type="text" value={nome} onChange={handleNome}></Input>
+                    </Flex>
+                    <Flex direction="column">
+                        <Text>Digite o código do produto</Text>
+                        <Input type="text" value={codigo} onChange={handleCodigo}></Input>
                     </Flex>
                     <Flex direction="column">
                         <Text>Digite o preço do produto</Text>

@@ -76,9 +76,9 @@ compra.post("/compras",async(req,res)=>
         const cliente = await Cliente.findByPk(id_cliente)
 
         if(!cliente)
-            return res.status(404).json({mensagem:"Esse cliente não foi encontrado!"})
+            return res.status(404).json({erro:"Esse cliente não foi encontrado!"})
         if(!admin)
-            return res.status(404).json({mensagem:"Esse admin não foi encontrado!"})
+            return res.status(404).json({erro:"Esse admin não foi encontrado!"})
 
         const data = new Date();
         const data_compra = format(data, 'yyyy-MM-dd HH:mm:ss');
@@ -104,7 +104,7 @@ compra.post("/compras",async(req,res)=>
     catch(error)
     {
         console.log(error)
-        res.status(500).json({mensagem:"Erro interno no servidor"})
+        res.status(500).json({erro:"Erro interno no servidor"})
     }
 })
 

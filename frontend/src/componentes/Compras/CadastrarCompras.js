@@ -1,89 +1,179 @@
 import { Search2Icon } from "@chakra-ui/icons";
-import { Button, Flex, Input, InputGroup, InputLeftElement, Select, Table, TableCaption, TableContainer, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, InputGroup, InputLeftElement, Select, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Nav } from "../../utils/BarraNavegação/Nav";
+import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
 
-export const CadastrarCompra = () =>
-{
-    const[busca,setBusca] = useState("");
-    const[vendedores,setVendedores] = useState([])
-    const[clientes,setClientes] = useState([])
-    const[vendedor,setVendedor] = useState("")
-    const handleBusca = (event) =>
-    {
+export const CadastrarCompra = () => {
+    const [busca, setBusca] = useState("");
+    const [vendedores, setVendedores] = useState([]);
+    const [clientes, setClientes] = useState([]);
+    const [vendedor, setVendedor] = useState("");
+    const [cliente,setCliente] = useState("");
+    const [produtos, setProdutos] = useState([]);
+    const [resultadosBusca, setResultadosBusca] = useState([]);
+    const [produtosAdicionados,setAdicionarProduto] = useState([]);
+    const[erro,setErro] = useState("");
+    const[mensagem,setMensagem] = useState("");
+    
+
+    const handleBusca = (event) => {
         setBusca(event.target.value);
-    }
+        if (event.target.value) {
+            const resultados = produtos.filter(produto => 
+                produto.nome.toLowerCase().includes(event.target.value.toLowerCase()) ||
+                produto.codigo.toLowerCase().includes(event.target.value.toLowerCase())
+            );
+            setResultadosBusca(resultados);
+        } else {
+            setResultadosBusca([]);
+        }
+    };
 
-    useEffect(()=>
-    {
-        const fetchVendedores = async() =>
-        {
+    useEffect(() => {
+        const fetchVendedores = async () => {
             try {
                 const response = await fetch('http://localhost:3000/usuarios');
-                const data = await response.json()
+                const data = await response.json();
                 setVendedores(data);
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
-        fetchVendedores()
-    },[])
+        };
+        fetchVendedores();
+    }, []);
 
-    useEffect(()=>
-    {
-        const fetchClientes = async()=>
-        {
+    useEffect(() => {
+        const fetchClientes = async () => {
             try {
                 const response = await fetch('http://localhost:3000/clientes');
                 const data = await response.json();
                 setClientes(data);
             } catch (error) {
-                console.log(error)
+                console.log(error);
+            }
+        };
+        fetchClientes();
+    }, []);
+
+    useEffect(() => {
+        const fetchProdutos = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/produtos');
+                const data = await response.json();
+                setProdutos(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchProdutos();
+    }, []);
+
+    const handleVendedor = (event) => {
+        setVendedor(event.target.value);
+    };
+
+    const handleCliente = (event) =>
+    {
+        setCliente(event.target.value);
+    }
+
+    const handleCadastrarCompra = async() => {
+        let quantidadesInvalidas = produtosAdicionados.some(produto => produto.quantidade <= 0);
+        if(!vendedor || !cliente)
+        {
+            setErro("Preencha os campos corretamente!")
+        }
+        else if(produtosAdicionados.length === 0)
+        {
+            setErro("É necessário escolher algum produto para cadastrar a compra!")
+        }
+        else if (quantidadesInvalidas) {
+            setErro("Todas as quantidades devem ser maiores que 0!");
+            return;
+        }
+        else
+        {
+            try {
+                const response = await fetch("http://localhost:3000/compras",
+                    {
+                        method:'POST',
+                        headers:{
+                            'Content-Type': 'application/json'
+                        },
+                        body:JSON.stringify({valor_compra:calcularTotalCompra(),
+                            id_cliente:cliente,
+                            id_admin:vendedor,
+                            produtos: produtosAdicionados.map(produto => ({
+                                id: produto.id,
+                                quantidade: produto.quantidade,
+                                valor_total: calcularTotalProduto(produto)
+                            }))})
+                    }
+                )
+                const data = await response.json();
+                setMensagem(data.mensagem);
+                setErro(data.erro)
+            } catch (error) {
+              console.log(error)  
             }
         }
-        fetchClientes()
-    },[])
 
 
-    const handleVendedor = (event) =>
-    {
-        setVendedor(event.target.value)
-    }
-    const handleCadastrarCompra = () =>
-    {   
 
-    }
+    };
+
+    const handleAdicionarProduto = (produto) => {
+        let produtoExistente = produtosAdicionados.find(p => p.id === produto.id);
+        if (produtoExistente) {
+            return;
+        }
+    
+        setAdicionarProduto(prevProdutos => [
+            ...prevProdutos, 
+            { ...produto, quantidade: 0 }
+        ]);
+    };
+
+    const handleQuantidadeChange = (id, quantidade) => {
+        setAdicionarProduto(prevProdutos => prevProdutos.map(produto => 
+            produto.id === id ? { ...produto, quantidade } : produto
+        ));
+    };
+
+    const calcularTotalProduto = (produto) => {
+        return produto.preco * produto.quantidade;
+    };
+
+    const calcularTotalCompra = () => {
+        return produtosAdicionados.reduce((total, produto) => total + calcularTotalProduto(produto), 0);
+    };
+
     return (
         <>
             <Nav />
             <Flex minH="100vh" width="100%" align="center" justify="flex-start" direction="column">
                 <Flex width="100%" flex="1" direction="row">
                     <Flex direction="column" width="50%" justify="flex-start" align="center" bg="#e1f274" p={4}>
+                    
                         <Text color="black" fontSize="2xl" mb={4} textAlign="center" width="100%">Cadastro de compras</Text>
                         <Flex direction="column" align="flex-start" width="100%">
+                        
                             <Flex direction="column" mb={4} width="100%">
                                 <Text>Selecione um vendedor</Text>
                                 <Select placeholder="Selecione um vendedor" value={vendedor} onChange={handleVendedor}>
-                                   {
-                                   vendedores.map(vendedor=>
-                                    (
+                                    {vendedores.map(vendedor => (
                                         <option key={vendedor.id} value={vendedor.id}>{vendedor.nome}</option>
-                                    )
-                                   )
-                                }
+                                    ))}
                                 </Select>
                             </Flex>
 
                             <Flex direction="column" mb={4} width="100%">
                                 <Text>Selecione um cliente</Text>
-                                <Select placeholder="Selecione um cliente">
-                                    {
-                                        clientes.map(cliente=>
-                                            (
-                                                <option key={cliente.id} value={cliente.id}>{cliente.nome}</option>
-                                            )
-                                        )
-                                    }
+                                <Select placeholder="Selecione um cliente" value={cliente} onChange={handleCliente}>
+                                    {clientes.map(cliente => (
+                                        <option key={cliente.id} value={cliente.id}>{cliente.nome}</option>
+                                    ))}
                                 </Select>
                             </Flex>
 
@@ -96,6 +186,18 @@ export const CadastrarCompra = () =>
                                     <Input type="text" value={busca} onChange={handleBusca} placeholder="Buscar código do produto..." />
                                 </InputGroup>
                             </Flex>
+
+                            {resultadosBusca.length > 0 && (
+                                <Box mt={2} width="100%">
+                                    <VStack spacing={2} align="start">
+                                        {resultadosBusca.map(produto => (
+                                            <Box key={produto.id} p={2} border="1px solid #ccc" borderRadius="md" width="100%">
+                                                <Text onClick={() =>handleAdicionarProduto(produto)} style={{cursor:'pointer'}}>{produto.nome} - {produto.codigo}</Text>
+                                            </Box>
+                                        ))}
+                                    </VStack>
+                                </Box>
+                            )}
                         </Flex>
                     </Flex>
 
@@ -109,16 +211,42 @@ export const CadastrarCompra = () =>
                                             <Th>Nome</Th>
                                             <Th>Preço</Th>
                                             <Th>Quantidade</Th>
+                                            <Th>Preço total</Th>
                                         </Tr>
                                     </Thead>
-                                    {/* Aqui você adicionaria o corpo da tabela (tbody) com os dados dos produtos */}
+                                    <Tbody>
+
+                                        {produtosAdicionados.map(produto=>
+                                            (
+                                                <Tr key={produto.id}>
+                                                    <Td>{produto.nome}</Td>
+                                                    <Td>{produto.preco}</Td>
+                                                    <Td>
+                                                    <Input 
+                                                        type="number" 
+                                                        value={produto.quantidade} 
+                                                        onChange={(e) => handleQuantidadeChange(produto.id, e.target.value)} 
+                                                        placeholder="Quantidade" 
+                                                    />  
+                                                </Td>
+                                                <Td>{calcularTotalProduto(produto)}</Td>
+                                                </Tr>
+                                            )
+                                        )}
+                                        <Tr>
+                                            <Td colSpan={2}></Td>
+                                            <Td fontWeight="bold">Total</Td>
+                                            <Td fontWeight="bold">{calcularTotalCompra()}</Td>
+                                        </Tr>
+                                    </Tbody>
                                 </Table>
                             </TableContainer>
                         </Flex>
+                        <Mensagem mensagem={mensagem} erro={erro}/>
                         <Button colorScheme="blue" onClick={handleCadastrarCompra} m="4">Finalizar Compra</Button>
                     </Flex>
                 </Flex>
             </Flex>
         </>
     );
-}
+};
