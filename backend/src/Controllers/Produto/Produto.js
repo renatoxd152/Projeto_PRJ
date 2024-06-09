@@ -1,4 +1,5 @@
 import express from 'express';
+import ItensCompra from '../../model/Compras/ItensComprasModel.js';
 import Produto from '../../model/Produto/ProdutoModel.js';
 const produto = express()
 
@@ -59,7 +60,6 @@ produto.put("/produtos/:id", async (req, res) => {
         produtoParaAtualizar.nome = nome;
         produtoParaAtualizar.preco = preco;
         produtoParaAtualizar.quantidade = quantidade;
-        produtoParaAtualizar.codigo = codigo;
 
         await produtoParaAtualizar.save();
 
@@ -75,6 +75,12 @@ produto.delete("/produtos/:id",async (req,res)=>
     try{
         let index = req.params.id
         
+        let itensDeCompra = await ItensCompra.findAll({ where: { id_produto: index } });
+
+        if (itensDeCompra.length > 0) {
+            return res.status(400).json({ erro: 'Este produto não pode ser excluído porque está associado a itens de compra.' });
+        }
+
         let produtoparaDeletar = await Produto.findByPk(index)
     
         if (!produtoparaDeletar) {
@@ -86,7 +92,7 @@ produto.delete("/produtos/:id",async (req,res)=>
     }
     catch(erro)
     {
-        console.log(error);
+        console.log(erro);
         res.status(500).json({ erro: 'Erro interno do servidor' });
     }
     

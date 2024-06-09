@@ -1,24 +1,27 @@
 import express from 'express'
 import ItensCompra from '../../model/Compras/ItensComprasModel.js'
+import Produto from '../../model/Produto/ProdutoModel.js'
 const itens_compra = express()
 itens_compra.use(express.json())
 
 const itens = [{id:"1",id_compra:1,id_produto:1},{id:"12",id_compra:1,id_produto:2}]
 
 
-itens_compra.get("/itensCompras/:id",async(req,res)=>{
+itens_compra.get("/itensCompras/:id", async (req, res) => {
     try {
         let id_compra = req.params.id;
-        let itensdaCompra = await ItensCompra.findAll(
-        {
-            where: {id_compra: id_compra}
-        }
-        )
-        res.status(200).json(itensdaCompra)
+        let itensdaCompra = await ItensCompra.findAll({
+            where: { id_compra: id_compra },
+            include: {
+                model: Produto,
+                attributes: ['nome', 'preco']
+            }
+        });
+        res.status(200).json(itensdaCompra);
     } catch (error) {
-        res.send(500).json({mensagem:"Erro interno no servidor!"})
+        res.status(500).json({ mensagem: "Erro interno no servidor!" });
     }
-})
+});
 
 itens_compra.get("/itensCompras/",async(req,res)=>{
     try {
@@ -49,6 +52,17 @@ itens_compra.delete("/itensCompras/:id",(req,res)=>
 function buscarIndexItensCompra(id)
 {
     return compras.findIndex(item_compra => item_compra.id == id)
+}
+
+async function buscarNomeProduto(id)
+{
+    const produtodoBanco = await Produto.findByPk(id);
+    return produtodoBanco.nome;
+}
+async function buscarPrecoProduto(id)
+{
+    const precoprodutodoBanco = await Produto.findByPk(id);
+    return precoprodutodoBanco.preco;
 }
 
 export default itens_compra

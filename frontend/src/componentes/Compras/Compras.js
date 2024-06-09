@@ -1,61 +1,69 @@
 import { Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../../utils/AuthContext";
 import { Nav } from "../../utils/BarraNavegação/Nav";
-
 export const Compras = () => {
     const [selectedCompra, setSelectedCompra] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
+    const [compras,setCompras] = useState([]);
+    const[produtos,setProdutos] = useState([]);
+    const{token} = useAuth();
 
-    const openModal = (compra) => {
+    const openModal =  async(compra) => {
         setSelectedCompra(compra);
         setIsOpen(true);
+        console.log(compra)
+        try {
+            const response = await fetch(`http://localhost:3000/itensCompras/${compra.id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token}`,
+                },
+            });
+            const data = await response.json();
+            
+            setProdutos(data);     
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const closeModal = () => {
         setSelectedCompra(null);
         setIsOpen(false);
     };
-
-    const compras = [
-        { vendedor: "João", cliente: "Sandra", valor: 100.50, data: "21/05/2024" },
-        { vendedor: "João", cliente: "Pedro", valor: 124.50, data: "21/05/2024" }
-    ];
-
-    const produtos = [
-        { nome: "Caneta", preco: 2.50 },
-        { nome: "Lápis", preco: 1.00 },
-        { nome: "Borracha", preco: 0.50 },
-        { nome: "Caderno", preco: 10.00 },
-        { nome: "Régua", preco: 1.50 },
-        { nome: "Tesoura", preco: 3.00 },
-        { nome: "Papel A4", preco: 5.00 },
-        { nome: "Almofada", preco: 15.00 },
-        { nome: "Copo", preco: 3.50 },
-        { nome: "Toalha de mesa", preco: 8.00 },
-        { nome: "Computador", preco: 800.00 },
-        { nome: "Mouse", preco: 20.00 },
-        { nome: "Teclado", preco: 30.00 },
-        { nome: "Monitor", preco: 150.00 },
-        { nome: "Impressora", preco: 100.00 },
-        { nome: "Fones de ouvido", preco: 50.00 },
-        { nome: "Mochila", preco: 40.00 },
-        { nome: "Carregador de celular", preco: 15.00 },
-        { nome: "Livro", preco: 12.00 },
-        { nome: "Cadeira", preco: 70.00 },
-        { nome: "Mesa", preco: 90.00 },
-        { nome: "Sofá", preco: 300.00 },
-        { nome: "Tapete", preco: 25.00 },
-        { nome: "TV", preco: 400.00 },
-        { nome: "DVD Player", preco: 50.00 },
-        { nome: "Vaso de flores", preco: 10.00 },
-        { nome: "Abajur", preco: 20.00 },
-        { nome: "Quadro decorativo", preco: 35.00 },
-        { nome: "Panela", preco: 18.00 },
-        { nome: "Frigideira", preco: 15.00 },
-        { nome: "Faca de cozinha", preco: 8.00 },
-    ];
     
+    useEffect(()=>
+        {
+            const fetchData = async () =>
+            {
+                try {
+                    const response = await fetch('http://localhost:3000/compras',
+                    {
+                        method:'GET',
+                        headers:{
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                        }, 
+                    }
+                )
+        
+                const data = await response.json();
+            
+                setCompras(data)
     
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+            
+    
+            fetchData();
+            
+        },[token])
+
+
 
     return (
         <>
@@ -72,8 +80,8 @@ export const Compras = () => {
                     <Tbody>
                         {compras.map((compra, index) => (
                             <Tr key={index} onClick={() => openModal(compra)} cursor="pointer">
-                                <Td>{compra.vendedor}</Td>
-                                <Td>{compra.cliente}</Td>
+                                <Td>{compra.nome_vendedor}</Td>
+                                <Td>{compra.nome_cliente}</Td>
                                 <Td>{compra.valor}</Td>
                                 <Td>{compra.data}</Td>
                             </Tr>
@@ -89,11 +97,11 @@ export const Compras = () => {
                     <ModalBody>
                         <Flex alignItems="center">
                             <Text fontWeight="bold" color="teal.500" mr="2">Vendedor:</Text>
-                            <Text>{selectedCompra && selectedCompra.vendedor}</Text>
+                            <Text>{selectedCompra && selectedCompra.nome_vendedor}</Text>
                         </Flex>
                         <Flex alignItems="center">
                             <Text fontWeight="bold" color="teal.500" mr="2">Cliente:</Text>
-                            <Text>{selectedCompra && selectedCompra.cliente}</Text>
+                            <Text>{selectedCompra && selectedCompra.nome_cliente}</Text>
                         </Flex>
                         <Flex alignItems="center">
                             <Text fontWeight="bold" color="teal.500" mr="2">Valor da Compra:</Text>
@@ -116,8 +124,8 @@ export const Compras = () => {
                                 <Tbody>
                                 {produtos.map((produto, index) => (
                                     <Tr key={index}>
-                                        <Td>{produto.nome}</Td>
-                                        <Td>{produto.preco}</Td>
+                                        <Td>{produto.produto.nome}</Td>
+                                        <Td>{produto.produto.preco}</Td>
                                     </Tr>
                                 ))}
                                 </Tbody>

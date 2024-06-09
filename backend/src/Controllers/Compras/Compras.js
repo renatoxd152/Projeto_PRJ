@@ -15,9 +15,11 @@ compra.get("/compras",async(req,res)=>{
         let mensagem = comprasdoBanco.map(async (compra) => {
             
             return {
-                nome: await buscarNomeCliente(compra.id_cliente),
+                id:compra.id,
+                nome_cliente: await buscarNomeCliente(compra.id_cliente),
+                nome_vendedor: await buscarNomeVendedor(compra.id_admin),
                 valor: compra.valor,
-                data:format(compra.data, 'yyyy-MM-dd HH:mm:ss')
+                data:format(compra.data, 'dd/MM/yyyy HH:mm:ss')
             };
         });
         mensagem = await Promise.all(mensagem);
@@ -169,5 +171,11 @@ async function buscarNomeCliente(id)
 {
     const clientedoBanco = await Cliente.findByPk(id);
     return clientedoBanco.nome;
+}
+
+async function buscarNomeVendedor(id)
+{
+    const vendedordoBanco = await Usuario.findByPk(id);
+    return vendedordoBanco.nome;
 }
 export default compra
