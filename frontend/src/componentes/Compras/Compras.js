@@ -1,12 +1,16 @@
-import { Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { Flex, IconButton, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../utils/AuthContext";
 import { Nav } from "../../utils/BarraNavegação/Nav";
+import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
 export const Compras = () => {
     const [selectedCompra, setSelectedCompra] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const [compras,setCompras] = useState([]);
     const[produtos,setProdutos] = useState([]);
+    const[mensagem,setMensagem] = useState("");
+    const[erro,setErro] = useState("")
     const{token} = useAuth();
 
     const openModal =  async(compra) => {
@@ -63,11 +67,42 @@ export const Compras = () => {
             
         },[token])
 
+    const handleDelete = async (compra,e) =>
+    {
+        e.stopPropagation();
+        try {
+            const response = await fetch(`http://localhost:3000/compras/${compra.id}`,
+                {
+                    method:'DELETE',
+                    headers:
+                    {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`,
+                    }
+                }
+            )
+            const data = await response.json();
+            if(data.erro)
+            {
+                setErro(data.erro);
+                setMensagem("");
+            }
+            else
+            {
+                setMensagem(data.mensagem);
+                setErro("");
+                setCompras(compras.filter(c => c.id !== compra.id))
+            }
 
+        } catch (error) {
+            setErro(error)
+        }
+    }
 
     return (
         <>
             <Nav />
+            <Mensagem erro={erro} mensagem={mensagem}/>
             <TableContainer>
                 <Table>
                     <TableCaption placement="top">Compras cadastradas</TableCaption>
@@ -77,6 +112,7 @@ export const Compras = () => {
                         <Th>Cliente</Th>
                         <Th>Valor da compra</Th>
                         <Th>Data da Compra</Th>
+                        <Th>Deletar</Th>
                     </Tr>
                         
                     </Thead>
@@ -87,6 +123,13 @@ export const Compras = () => {
                                 <Td>{compra.nome_cliente}</Td>
                                 <Td>{compra.valor}</Td>
                                 <Td>{compra.data}</Td>
+                                <Td> 
+                                    <IconButton
+                                    icon={<DeleteIcon />}
+                                    colorScheme="red"
+                                    variant="ghost"
+                                    onClick={(e) => handleDelete(compra,e)}/>
+                                </Td>
                             </Tr>
                         ))}
                     </Tbody>
