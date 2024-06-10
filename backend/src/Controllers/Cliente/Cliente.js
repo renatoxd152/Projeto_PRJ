@@ -1,5 +1,6 @@
-import express from 'express'
-import Cliente from '../../model/Cliente/ClienteModel.js'
+import express from 'express';
+import Cliente from '../../model/Cliente/ClienteModel.js';
+import Compra from '../../model/Compras/ComprasModel.js';
 const cliente = express()
 cliente.use(express.json())
 
@@ -80,7 +81,7 @@ cliente.put("/clientes/:id",async(req,res)=>
 
         if(!clienteparaAtualizar)
         {
-            return res.status(404).json({mensagem:"Esse cliente não foi encontrado!"})
+            return res.status(404).json({erro:"Esse cliente não foi encontrado!"})
         }
         clienteparaAtualizar.nome = nome
         clienteparaAtualizar.email = email
@@ -99,7 +100,7 @@ cliente.put("/clientes/:id",async(req,res)=>
     }
     catch(error)
     {
-        res.status(500).json({mensagem:"Erro interno no servidor!"})
+        res.status(500).json({erro:"Erro interno no servidor!"})
     }
 })
 
@@ -108,17 +109,28 @@ cliente.delete("/clientes/:id",async(req,res)=>
 {
     try {
         let index = req.params.id;
-
+        let clienteCompra = await Compra.findAll(
+            {
+                where:
+                {
+                    id_cliente:index
+                }
+            }
+        )
+        if(clienteCompra.length > 0)
+        {
+            return res.status(400).json({erro:"Não é possível excluir esse cliente, pois está relacionado a uma ou mais compras!"})
+        }
         let clienteparaDeletar = await Cliente.findByPk(index);
     
         if(!clienteparaDeletar){
-            return res.status(404).json({mensagem:"O cliente não foi encontrado!"})
+            return res.status(404).json({erro:"O cliente não foi encontrado!"})
         }
         clienteparaDeletar.destroy()
     
         res.status(201).json({mensagem:`Cliente com id ${req.params.id} excluído com sucesso!`})
     } catch (error) {
-        res.status(500).json({mensagem:"Erro interno no servidor!"})
+        res.status(500).json({erro:"Erro interno no servidor!"})
     }
    
 })

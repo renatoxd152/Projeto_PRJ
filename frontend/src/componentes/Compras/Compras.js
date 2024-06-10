@@ -72,10 +72,13 @@ export const Compras = () => {
                 <Table>
                     <TableCaption placement="top">Compras cadastradas</TableCaption>
                     <Thead>
+                    <Tr>
                         <Th>Vendedor</Th>
                         <Th>Cliente</Th>
                         <Th>Valor da compra</Th>
                         <Th>Data da Compra</Th>
+                    </Tr>
+                        
                     </Thead>
                     <Tbody>
                         {compras.map((compra, index) => (
