@@ -1,6 +1,6 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { Button, Flex, Grid, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Button, Flex, Grid, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import validator from 'validator';
 import { useAuth } from "../../utils/AuthContext";
 export const ClientesBanco = ({setErro,setMensagem}) =>
@@ -13,7 +13,9 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
     const[estados,setEstados] = useState([])
     const[historicoCliente,setHistoricoCliente] = useState([]);
     const [mostrarDetalhesCompra, setMostrarDetalhesCompra] = useState(false);
-   console.log("HISTÓRICO DE COMPRAS DO CLIENTE:\n",historicoCliente);
+    const [compraSelecionada, setCompraSelecionada] = useState(null);
+    const[itens,setItens] = useState([])
+  
     useEffect(()=>
         {
             const fetchEstados = async () =>
@@ -249,10 +251,33 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
         setModal(false)
         setHistoricoCliente(null)
     }
+    
+    const handleCompraClick = async(compra) => {
+        if (compraSelecionada && compraSelecionada.id === compra.id) {
+            setCompraSelecionada(null);
+            setMostrarDetalhesCompra(false);
+        } else {
+            setCompraSelecionada(compra);
+            setMostrarDetalhesCompra(true);
 
-    const handleCompraClick = () => {
-        setMostrarDetalhesCompra(true);
-    }; 
+            try {
+                const response = await fetch(`http://localhost:3000/itensCompras/${compra.id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`,
+                    },
+                });
+                const data = await response.json();
+                
+                setItens(data);     
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    };
+    
+    
     return(
         <>
         <Tbody>
@@ -393,20 +418,49 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
                                 <Th>Valor da Compra</Th>
                             </Tr>
                         </Thead>
-                        <Tbody>
-                            {historicoCliente.map(compra => (
-                                <Tr key={compra.data} onClick={handleCompraClick}>
+                        <Tbody padding="0">
+                        {historicoCliente.map(compra => [
+                                <Tr key={compra.id} onClick={() => handleCompraClick(compra)} style={{ cursor: 'pointer' }}>
                                     <Td>{compra.data}</Td>
                                     <Td>{compra.valor}</Td>
-                                </Tr>
-                            ))}
+                                </Tr>,
+                                compraSelecionada === compra && mostrarDetalhesCompra && (
+                                    <Tr key={compra.data}>
+                                        <Td colSpan="2">
+                                            <Flex bg="#e1f274" p={4} w="100%">
+                                                <TableContainer  w="100%">
+                                                    <Table>
+                                                        <TableCaption placement="top">Itens da compra</TableCaption>
+                                                        
+                                                        <Thead>
+                                                            <Tr>
+                                                                <Th>Nome</Th>
+                                                                <Th>Preço</Th>
+                                                                <Th>Quantidade</Th>
+                                                            </Tr>
+                                                        </Thead>
+                                                        <Tbody>
+                                                            {
+                                                                itens.map(item=>
+                                                                    (
+                                                                        <Tr key={item.id}>
+                                                                            <Td>{item.produto.nome}</Td>
+                                                                            <Td>{item.produto.preco}</Td>
+                                                                            <Td>{item.quantidade}</Td>
+                                                                        </Tr>
+                                                                    )
+                                                                )
+                                                            }
+                                                        </Tbody>
+                                                    </Table>
+                                                </TableContainer>
+                                            </Flex>
+                                        </Td>
+                                    </Tr>
+                                )
+                            ])}
                         </Tbody>
                     </Table>
-                    {mostrarDetalhesCompra && (
-                        <Flex>
-                            oi
-                        </Flex>
-                    )}
                 </ModalBody>
                 <ModalFooter></ModalFooter>
             </ModalContent>
