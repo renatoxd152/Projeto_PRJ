@@ -1,36 +1,47 @@
 import { Flex, Select, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { Chart } from 'react-google-charts';
+import { useAuth } from '../../utils/AuthContext';
 import { Nav } from '../../utils/BarraNavegação/Nav';
+import { Mensagem } from '../../utils/Mensagem/MensagemStatus';
 
 export const ComprasMes = () => {
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [reportData, setReportData] = useState(null);
+    const [selectedMonth, setSelectedMonth] = useState('');
+    const [reportData, setReportData] = useState(null);
+    const [mensagem,setMensagem] = useState("");
+    const [erro,setErro] = useState("");
+    const{token} = useAuth();
 
-const handleMonthSelect = (event) => {
-    const selectedMonth = event.target.value;
-    setSelectedMonth(selectedMonth);
 
-    const mockData = [
-        ['Dia', 'Vendas'],
-        ['11/02/2024', 100],
-        ['11/02/2024', 150],
-        ['11/03/2024', 150],
-        ['11/03/2024', 30],
-        ['11/03/2024', 150],
-        ['11/03/2024', 40],
-      ];
-    
-      const filteredData = mockData.filter(item => {
-        const month = parseInt(item[0].split('/')[1], 10);
-        return month === parseInt(selectedMonth, 10);
-      });
-    
-      if (filteredData.length === 0) {
-        setReportData(null);
-      } else {
-        setReportData([['Dia', 'Vendas'], ...filteredData]);
-      }
+
+    const handleMonthSelect = async(event) => {
+        const selectedMonth = event.target.value;
+        setSelectedMonth(selectedMonth);
+      
+        try {
+            const response = await fetch(`http://localhost:3000/relatorio/meses/${selectedMonth}`,
+                {
+                    method:'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`,
+                    }
+                }
+            );
+            
+            const data = await response.json();
+            if (data.erro) {
+                setReportData(null);
+                setErro(data.erro)
+                setMensagem("")
+            } else {
+            const formattedData = [['Dia', 'Vendas'], ...data.map(item => [item.data, item.valor])];
+            setReportData(formattedData);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+            setReportData(null);
+        }
   };
   
 
@@ -59,9 +70,6 @@ const handleMonthSelect = (event) => {
             <option value="11">Novembro</option>
             <option value="12">Dezembro</option>
         </Select>
-        {
-            console.log(reportData)
-        }
         {reportData ? (
           <Chart
             chartType="LineChart"
@@ -75,7 +83,9 @@ const handleMonthSelect = (event) => {
             }}
           />
         ) : (
-          <Text>Nenhum dado disponível para exibição.</Text>
+            <>
+            <Mensagem erro={erro} mensagem={mensagem}/>
+          </>
         )}
       </Flex>
     </>

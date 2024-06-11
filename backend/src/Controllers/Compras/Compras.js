@@ -1,9 +1,10 @@
-import { format } from 'date-fns'
-import express from 'express'
-import Cliente from '../../model/Cliente/ClienteModel.js'
-import Compra from '../../model/Compras/ComprasModel.js'
-import ItensCompra from '../../model/Compras/ItensComprasModel.js'
-import Usuario from '../../model/Usuario/UsuarioModel.js'
+import { endOfMonth, format, parseISO, startOfMonth } from 'date-fns';
+import express from 'express';
+import { Op } from 'sequelize';
+import Cliente from '../../model/Cliente/ClienteModel.js';
+import Compra from '../../model/Compras/ComprasModel.js';
+import ItensCompra from '../../model/Compras/ItensComprasModel.js';
+import Usuario from '../../model/Usuario/UsuarioModel.js';
 const compra = express()
 compra.use(express.json())
 
@@ -161,6 +162,51 @@ compra.delete("/compras/:id",async(req,res)=>
         res.send(500).json({erro:"Erro interno no servidor"})
     }
 })
+
+compra.get("/relatorio/meses/:mes", async (req, res) => {
+    try {
+        const mes = parseInt(req.params.mes, 10);
+        const ano = new Date().getFullYear();
+
+        const inicioMes = startOfMonth(new Date(ano, mes - 1, 1));
+        const fimMes = endOfMonth(inicioMes);
+
+        const comprasDoMes = await Compra.findAll({
+            where: {
+                data: {
+                    [Op.between]: [inicioMes, fimMes]
+                }
+            }
+        });
+
+        if (comprasDoMes.length === 0) {
+            return res.status(404).json({ erro: 'Não há compras neste mês!' });
+        }
+
+        const totalPorDia = {};
+
+        comprasDoMes.forEach(compra => {
+            const dia = format(parseISO(compra.data.toISOString()), 'dd/MM/yyyy');
+            if (!totalPorDia[dia]) {
+                totalPorDia[dia] = 0;
+            }
+            totalPorDia[dia] += compra.valor;
+        });
+
+        const resultado = Object.keys(totalPorDia).map(dia => ({
+            data: dia,
+            valor: totalPorDia[dia]
+        }));
+
+        res.status(200).json(resultado);
+    } catch (erro) {
+        console.log(erro)
+        res.status(500).json({ erro: "Erro interno no servidor!"});
+    }
+});
+
+
+
 
 
 async function buscarNomeCliente(id)
