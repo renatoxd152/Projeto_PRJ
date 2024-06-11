@@ -3,12 +3,13 @@ import { Button, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalCon
 import { useEffect, useState } from "react";
 import { useAuth } from "../../utils/AuthContext";
 
-export const ProdutosBanco = ({setErro,setMensagem}) =>
+export const ProdutosBanco = ({busca,setErro,setMensagem}) =>
 {
     const[produtos,setProdutos] = useState([])
     const [isOpen, setIsOpen] = useState(false);
     const{token} = useAuth();
     const [selectedProduto, setSelectedProduto] = useState(null);
+    const [produtosFiltrados, setProdutosFiltrados] = useState([]);
 
     const closeModal = () => {
         setSelectedProduto(null);
@@ -40,7 +41,6 @@ export const ProdutosBanco = ({setErro,setMensagem}) =>
             const data = await response.json();
     
             setProdutos(data);
-
             } catch (error) {
                 console.log(error)
             }
@@ -50,6 +50,18 @@ export const ProdutosBanco = ({setErro,setMensagem}) =>
         fetchData();
         
     },[token])
+
+
+    useEffect(() => {
+        const filtrarProdutos = () => {
+            const produtosFiltrados = produtos.filter(produto =>
+                produto.nome.toLowerCase().includes(busca.toLowerCase())
+            );
+            setProdutosFiltrados(produtosFiltrados);
+        };
+    
+        filtrarProdutos();
+    }, [produtos, busca]);
 
     const handleDelete = async (id) => {
         try {
@@ -128,30 +140,56 @@ export const ProdutosBanco = ({setErro,setMensagem}) =>
     return(
         <>
             <Tbody>
-            {produtos.map(produto => (
-                <Tr key={produto.id}>
-                    <Td>{produto.nome}</Td>
-                    <Td>{produto.quantidade}</Td>
-                    <Td>{produto.preco}</Td>
-                    <Td>
-                        <IconButton
-                            icon={<EditIcon />}
-                            colorScheme="blue"
-                            variant="ghost"
-                            onClick={() => openModal(produto)}
-                        />
-                    </Td>
-                    <Td>
-                        <IconButton
-                            icon={<DeleteIcon />}
-                            colorScheme="red"
-                            variant="ghost"
-                            onClick={() => handleDelete(produto.id)}
-                        />
-                    </Td>
-                </Tr>
-            ))}
-            </Tbody>  
+            {busca.length > 0 ? (
+                produtosFiltrados.map(produto => (
+                    <Tr key={produto.id}>
+                        <Td>{produto.nome}</Td>
+                        <Td>{produto.quantidade}</Td>
+                        <Td>{produto.preco}</Td>
+                        <Td>
+                            <IconButton
+                                icon={<EditIcon />}
+                                colorScheme="blue"
+                                variant="ghost"
+                                onClick={() => openModal(produto)}
+                            />
+                        </Td>
+                        <Td>
+                            <IconButton
+                                icon={<DeleteIcon />}
+                                colorScheme="red"
+                                variant="ghost"
+                                onClick={() => handleDelete(produto.id)}
+                            />
+                        </Td>
+                    </Tr>
+                ))
+            ) : (
+                produtos.map(produto => (
+                    <Tr key={produto.id}>
+                        <Td>{produto.nome}</Td>
+                        <Td>{produto.quantidade}</Td>
+                        <Td>{produto.preco}</Td>
+                        <Td>
+                            <IconButton
+                                icon={<EditIcon />}
+                                colorScheme="blue"
+                                variant="ghost"
+                                onClick={() => openModal(produto)}
+                            />
+                        </Td>
+                        <Td>
+                            <IconButton
+                                icon={<DeleteIcon />}
+                                colorScheme="red"
+                                variant="ghost"
+                                onClick={() => handleDelete(produto.id)}
+                            />
+                        </Td>
+                    </Tr>
+                ))
+            )}
+        </Tbody>
            
              {selectedProduto &&
                (

@@ -3,7 +3,7 @@ import { Button, Flex, Grid, IconButton, Input, Modal, ModalBody, ModalCloseButt
 import React, { useEffect, useState } from "react";
 import validator from 'validator';
 import { useAuth } from "../../utils/AuthContext";
-export const ClientesBanco = ({setErro,setMensagem}) =>
+export const ClientesBanco = ({busca,setErro,setMensagem}) =>
 {
     const[clientes,setClientes] = useState([])
     const{token} = useAuth();
@@ -15,7 +15,7 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
     const [mostrarDetalhesCompra, setMostrarDetalhesCompra] = useState(false);
     const [compraSelecionada, setCompraSelecionada] = useState(null);
     const[itens,setItens] = useState([])
-  
+    const [clientesFiltrados, setClientesFiltrados] = useState([]);
     useEffect(()=>
         {
             const fetchEstados = async () =>
@@ -45,6 +45,18 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
             fetchCidades();
         }, [clienteSelecionado]);
 
+        useEffect(() => {
+            const filtrarClientes = () => {
+                const clientesFiltrados = clientes.filter(cliente =>
+                    cliente.nome.toLowerCase().includes(busca.toLowerCase()) ||
+                    cliente.cpf.includes(busca) ||
+                    cliente.email.toLowerCase().includes(busca.toLowerCase())
+                );
+                setClientesFiltrados(clientesFiltrados);
+            };
+        
+            filtrarClientes();
+        }, [clientes, busca]);
         
     const openModal = (cliente,event)=>
     {
@@ -282,9 +294,11 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
         <>
         <Tbody>
             {
-                clientes.map(cliente =>
+                busca.length > 0 ?
                 (
-                        <Tr key={cliente.id} onClick={() => visualizarCompras(cliente)} style={{cursor:'pointer'}}>
+                    clientesFiltrados.map(cliente=>
+                        (
+                            <Tr key={cliente.id} onClick={() => visualizarCompras(cliente)} style={{cursor:'pointer'}}>
                             <Td>{cliente.nome}</Td>
                             <Td>{cliente.email}</Td>
                             <Td>{cliente.cpf}</Td>
@@ -312,7 +326,42 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
                                 />
                             </Td>
                         </Tr>
-                )
+                        )
+                    )
+                ):
+                (
+                    clientes.map(cliente =>
+                        (
+                                <Tr key={cliente.id} onClick={() => visualizarCompras(cliente)} style={{cursor:'pointer'}}>
+                                    <Td>{cliente.nome}</Td>
+                                    <Td>{cliente.email}</Td>
+                                    <Td>{cliente.cpf}</Td>
+                                    <Td>{cliente.telefone}</Td>
+                                    <Td>{cliente.rua}</Td>
+                                    <Td>{cliente.bairro}</Td>
+                                    <Td>{cliente.estado}</Td>
+                                    <Td>{cliente.nome_cidade}</Td>
+                                    <Td>{cliente.numero}</Td>
+                                    <Td>{cliente.cep}</Td>
+                                    <Td>
+                                        <IconButton
+                                            icon={<EditIcon />}
+                                            colorScheme="blue"
+                                            variant="ghost"
+                                            onClick={(e) => openModal(cliente,e)}
+                                        />
+                                    </Td>
+                                    <Td>
+                                        <IconButton
+                                            icon={<DeleteIcon />}
+                                            colorScheme="red"
+                                            variant="ghost"
+                                            onClick={() => handleDelete(cliente)}
+                                        />
+                                    </Td>
+                                </Tr>
+                        )
+                        )
                 )
             }
         </Tbody>
