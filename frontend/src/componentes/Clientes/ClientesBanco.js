@@ -9,6 +9,7 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
     const{token} = useAuth();
     const[clienteSelecionado,setSelecionarCliente] = useState(null);
     const[modal,setModal] = useState(false);
+    const[editModal,setEditModal] = useState(false);
     const[cidades,setCidades] = useState([])
     const[estados,setEstados] = useState([])
     const[historicoCliente,setHistoricoCliente] = useState([]);
@@ -16,6 +17,7 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
     const [compraSelecionada, setCompraSelecionada] = useState(null);
     const[itens,setItens] = useState([])
     const [clientesFiltrados, setClientesFiltrados] = useState([]);
+    
     useEffect(()=>
         {
             const fetchEstados = async () =>
@@ -61,14 +63,19 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
     const openModal = (cliente,event)=>
     {
         event.stopPropagation();
-        setModal(true)
-        setSelecionarCliente(cliente)
+        setEditModal(true);
+        setSelecionarCliente(cliente);
     }
 
     const closeModal = () =>
     {
+        setSelecionarCliente(null);
+        setModal(false);
+    }
+    const closeEditModal = () =>
+    {
         setSelecionarCliente(null)
-        setModal(false)
+        setEditModal(false)
     }
 
     const handleDelete = async(cliente)=>
@@ -368,7 +375,7 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
         {
             clienteSelecionado &&
             (
-                <Modal isOpen={modal} onClose={closeModal}>
+                <Modal isOpen={editModal} onClose={closeEditModal}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Editar cliente
