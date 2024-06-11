@@ -16,11 +16,11 @@ function App() {
         <Routes>
           <Route path='/' element={<Cadastrar/>}/>
           <Route path='/compras' element={<PrivateRoute><Compras/></PrivateRoute>}/>
-          <Route path='/cadastrarCompras' element={<CadastrarCompra/>}/>
+          <Route path='/cadastrarCompras' element={<PrivateRoute><CadastrarCompra/></PrivateRoute>}/>
           <Route path='/cadastrarProduto' element={<PrivateRoute><Produtos/></PrivateRoute>}/>
           <Route path='/listarProdutos' element={<PrivateRoute><ListarProdutos/></PrivateRoute>}/>
-          <Route path='/cadastrarCliente' element={<CadastrarCliente/>}/>
-          <Route path='/listarClientes' element={<ListarClientes/>}/>
+          <Route path='/cadastrarCliente' element={<PrivateRoute><CadastrarCliente/></PrivateRoute>}/>
+          <Route path='/listarClientes' element={<PrivateRoute><ListarClientes/></PrivateRoute>}/>
         </Routes>
       </Router>
     </AuthProvider>

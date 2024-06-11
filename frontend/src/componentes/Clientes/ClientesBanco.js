@@ -1,5 +1,5 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { Button, Flex, Grid, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Tbody, Td, Text, Tr } from "@chakra-ui/react";
+import { Button, Flex, Grid, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import validator from 'validator';
 import { useAuth } from "../../utils/AuthContext";
@@ -11,8 +11,9 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
     const[modal,setModal] = useState(false);
     const[cidades,setCidades] = useState([])
     const[estados,setEstados] = useState([])
-
-
+    const[historicoCliente,setHistoricoCliente] = useState([]);
+    const [mostrarDetalhesCompra, setMostrarDetalhesCompra] = useState(false);
+   console.log("HISTÓRICO DE COMPRAS DO CLIENTE:\n",historicoCliente);
     useEffect(()=>
         {
             const fetchEstados = async () =>
@@ -43,8 +44,9 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
         }, [clienteSelecionado]);
 
         
-    const openModal = (cliente)=>
+    const openModal = (cliente,event)=>
     {
+        event.stopPropagation();
         setModal(true)
         setSelecionarCliente(cliente)
     }
@@ -209,14 +211,55 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
             [name]: value
         }));
     };
-        
+
+    const visualizarCompras = async(cliente)=>
+    {
+        setModal(true)
+        try {
+            const response = await fetch(`http://localhost:3000/compras/${cliente.id}`,
+             {
+                 method:'GET',
+                 headers:
+                 {
+                     'Content-Type': 'application/json',
+                     'Authorization': `${token}`,
+                 }
+             }) 
+ 
+             const data = await response.json()
+             if(data.erro)
+             {
+                 setErro(data.erro)
+                 setMensagem("")
+                 closeModal()
+             }
+             else
+             {
+                setHistoricoCliente(data)
+             }
+         } catch (error) {
+             setMensagem("");
+             setErro("")
+             closeModal()
+         }
+    }
+
+    const closeModalHistorico = () =>
+    {
+        setModal(false)
+        setHistoricoCliente(null)
+    }
+
+    const handleCompraClick = () => {
+        setMostrarDetalhesCompra(true);
+    }; 
     return(
         <>
         <Tbody>
             {
                 clientes.map(cliente =>
                 (
-                        <Tr key={cliente.id}>
+                        <Tr key={cliente.id} onClick={() => visualizarCompras(cliente)} style={{cursor:'pointer'}}>
                             <Td>{cliente.nome}</Td>
                             <Td>{cliente.email}</Td>
                             <Td>{cliente.cpf}</Td>
@@ -232,7 +275,7 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
                                     icon={<EditIcon />}
                                     colorScheme="blue"
                                     variant="ghost"
-                                    onClick={() => openModal(cliente)}
+                                    onClick={(e) => openModal(cliente,e)}
                                 />
                             </Td>
                             <Td>
@@ -333,6 +376,44 @@ export const ClientesBanco = ({setErro,setMensagem}) =>
             </Modal>
             )
         }
+
+
+{
+    historicoCliente && (
+        <Modal isOpen={modal} onClose={closeModalHistorico}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Histórico do Cliente</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <Table variant="simple">
+                        <Thead>
+                            <Tr>
+                                <Th>Data da Compra</Th>
+                                <Th>Valor da Compra</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {historicoCliente.map(compra => (
+                                <Tr key={compra.data} onClick={handleCompraClick}>
+                                    <Td>{compra.data}</Td>
+                                    <Td>{compra.valor}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                    {mostrarDetalhesCompra && (
+                        <Flex>
+                            oi
+                        </Flex>
+                    )}
+                </ModalBody>
+                <ModalFooter></ModalFooter>
+            </ModalContent>
+        </Modal>
+    )
+}
+
         </>
         
     )

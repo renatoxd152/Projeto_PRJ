@@ -31,36 +31,32 @@ compra.get("/compras",async(req,res)=>{
     }
 })
 
-compra.get("/compras/:idCliente",async(req,res)=>{
-    try{
-
+compra.get("/compras/:idCliente", async (req, res) => {
+    try {
         let idCliente = req.params.idCliente;
 
         let comprasdoClienteBanco = await Compra.findAll({
-            where:{id_cliente:idCliente}
-        })
+            where: { id_cliente: idCliente }
+        });
 
-        if(!comprasdoClienteBanco)
-        {
-            return res.status(404).json({ erro: 'O cliente não possui compras!'});
+        if (comprasdoClienteBanco.length === 0) {
+            return res.status(404).json({ erro: 'O cliente não possui compras!' });
         }
 
-        let mensagem = comprasdoClienteBanco.map(async compras=>{
-            
-            return{
-                nome:await buscarNomeCliente(compras.id_cliente),
-                valor:compras.valor,
-                data:format(compra.data, 'yyyy-MM-dd HH:mm:ss')
-            }
-        })
-        mensagem = await Promise.all(mensagem);
-        res.status(200).json(mensagem)
+        let mensagem = comprasdoClienteBanco.map(compras => {
+            return {
+                id:compras.id,
+                valor: compras.valor,
+                data: format(compras.data, 'dd/MM/yyyy HH:mm:ss')
+            };
+        });
+
+        res.status(200).json(mensagem);
+    } catch (erro) {
+        res.status(500).json({ erro: "Erro interno no servidor!" });
     }
-    catch(erro)
-    {
-        res.status(500).json({mensagem:"Erro interno no servidor!"})
-    }
-})
+});
+
 
 compra.post("/compras",async(req,res)=>
 {
