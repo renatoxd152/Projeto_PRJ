@@ -1,10 +1,11 @@
 import { endOfMonth, format, parseISO, startOfMonth } from 'date-fns';
 import express from 'express';
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import Cliente from '../../model/Cliente/ClienteModel.js';
 import Compra from '../../model/Compras/ComprasModel.js';
 import ItensCompra from '../../model/Compras/ItensComprasModel.js';
 import Usuario from '../../model/Usuario/UsuarioModel.js';
+
 const compra = express()
 compra.use(express.json())
 
@@ -204,6 +205,38 @@ compra.get("/relatorio/meses/:mes", async (req, res) => {
         res.status(500).json({ erro: "Erro interno no servidor!"});
     }
 });
+
+compra.get("/relatorio/compras/clientes", async (req, res) => {
+    try {
+        const clientesCompras = await Compra.findAll({
+            attributes: [
+                'id_cliente', 
+                [Sequelize.fn('count', Sequelize.col('id_cliente')), 'total_compras']
+            ],
+            include: [{
+                model: Cliente,
+                attributes: ['nome']
+            }],
+            group: ['id_cliente', 'Cliente.id']
+        });
+
+        if (clientesCompras.length === 0) {
+            return res.status(404).json({ erro: 'Nenhuma compra encontrada!' });
+        }
+        console.log(clientesCompras)
+        const resultado = clientesCompras.map(compra => ({
+            id_cliente: compra.id_cliente,
+            nome_cliente: compra.cliente.nome,
+            total_compras: compra.dataValues.total_compras 
+        }));
+
+        res.status(200).json(resultado);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ erro: "Erro interno no servidor!" });
+    }
+});
+
 
 
 

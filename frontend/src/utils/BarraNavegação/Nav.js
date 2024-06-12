@@ -58,7 +58,7 @@ export const Nav = () => {
                             <Link href='/compras/mes'>Relatório de compras por mês</Link>
                         </MenuItem>
                         <MenuItem>
-                            Relatório de clientes com mais compras por mês
+                        <Link href='/compras/clientes'>Relatório de clientes com mais compras por mês</Link>
                         </MenuItem>
                     </MenuList>
                 </Menu>
