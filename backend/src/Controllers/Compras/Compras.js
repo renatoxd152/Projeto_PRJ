@@ -18,6 +18,7 @@ compra.get("/compras",async(req,res)=>{
             
             return {
                 id:compra.id,
+                id_admin:compra.id_admin,
                 nome_cliente: await buscarNomeCliente(compra.id_cliente),
                 nome_vendedor: await buscarNomeVendedor(compra.id_admin),
                 valor: compra.valor,
@@ -144,7 +145,7 @@ compra.delete("/compras/:id",async(req,res)=>
         
         let index = req.params.id;
         let compraparaDeletar = await Compra.findByPk(index);
-
+       
         if(!compraparaDeletar){
             return res.status(404).json({erro:"A compra não foi encontrado!"})
         }

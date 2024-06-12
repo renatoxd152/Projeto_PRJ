@@ -12,11 +12,11 @@ export const Compras = () => {
     const[mensagem,setMensagem] = useState("");
     const[erro,setErro] = useState("")
     const{token} = useAuth();
-
+   
     const openModal =  async(compra) => {
         setSelectedCompra(compra);
         setIsOpen(true);
-        console.log(compra)
+        
         try {
             const response = await fetch(`http://localhost:3000/itensCompras/${compra.id}`, {
                 method: 'GET',

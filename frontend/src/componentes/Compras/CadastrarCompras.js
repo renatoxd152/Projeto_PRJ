@@ -151,8 +151,8 @@ export const CadastrarCompra = () => {
 
     return (
         <>
-            <Nav />
             <Flex minH="100vh" width="100%" align="center" justify="flex-start" direction="column">
+            <Nav/>
                 <Flex width="100%" flex="1" direction="row">
                     <Flex direction="column" width="50%" justify="flex-start" align="center" bg="#e1f274" p={4}>
                     
@@ -161,7 +161,7 @@ export const CadastrarCompra = () => {
                         
                             <Flex direction="column" mb={4} width="100%">
                                 <Text>Selecione um vendedor</Text>
-                                <Select placeholder="Selecione um vendedor" value={vendedor} onChange={handleVendedor}>
+                                <Select placeholder="Selecione um vendedor" value={vendedor} onChange={handleVendedor} >
                                     {vendedores.map(vendedor => (
                                         <option key={vendedor.id} value={vendedor.id}>{vendedor.nome}</option>
                                     ))}
