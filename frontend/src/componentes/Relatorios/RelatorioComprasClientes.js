@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { useAuth } from "../../utils/AuthContext";
 import { Nav } from "../../utils/BarraNavegação/Nav";
-
+import { Mensagem } from '../../utils/Mensagem/MensagemStatus';
 export const ComprasClientes = () =>
 {
     const [comprasPorCliente, setComprasPorCliente] = useState([]);
     const [erro,setErro] = useState("")
     const{token} = useAuth()
 
-    
+
     useEffect(()=>
     {
         const fetchData = async() =>
@@ -40,7 +40,7 @@ export const ComprasClientes = () =>
         fetchData();
         
     },[token])
-    console.log(comprasPorCliente);
+    
     const data = [
         ['Cliente', 'Quantidade de Compras'],
         ...comprasPorCliente.map(cliente => [cliente.nome_cliente, cliente.total_compras])
@@ -61,6 +61,7 @@ export const ComprasClientes = () =>
             <Nav/>
             <Flex direction="column" alignItems="center" padding="2rem">
                 <Text fontSize="xl" marginBottom="1rem">Relatório de Compras por Mês</Text>
+                <Mensagem erro={erro}/>
                 <Chart chartType="ColumnChart" width="100%" height="400px" data={data} options={options}/>
             </Flex>
             
