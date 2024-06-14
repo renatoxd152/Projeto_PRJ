@@ -10,7 +10,7 @@ export const ProdutosBanco = ({busca,setErro,setMensagem}) =>
     const{token} = useAuth();
     const [selectedProduto, setSelectedProduto] = useState(null);
     const [produtosFiltrados, setProdutosFiltrados] = useState([]);
-
+    const{getUserType} = useAuth()
     const closeModal = () => {
         setSelectedProduto(null);
         setIsOpen(false);
@@ -146,22 +146,30 @@ export const ProdutosBanco = ({busca,setErro,setMensagem}) =>
                         <Td>{produto.nome}</Td>
                         <Td>{produto.quantidade}</Td>
                         <Td>{produto.preco}</Td>
-                        <Td>
-                            <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                variant="ghost"
-                                onClick={() => openModal(produto)}
-                            />
-                        </Td>
-                        <Td>
-                            <IconButton
-                                icon={<DeleteIcon />}
-                                colorScheme="red"
-                                variant="ghost"
-                                onClick={() => handleDelete(produto.id)}
-                            />
-                        </Td>
+                        {
+                            getUserType() === "ADMIN" &&
+                            (
+                                <>
+                                        <Td>
+                                            <IconButton
+                                                icon={<EditIcon />}
+                                                colorScheme="blue"
+                                                variant="ghost"
+                                                onClick={() => openModal(produto)}
+                                            />
+                                        </Td>
+                                        <Td>
+                                            <IconButton
+                                                icon={<DeleteIcon />}
+                                                colorScheme="red"
+                                                variant="ghost"
+                                                onClick={() => handleDelete(produto.id)}
+                                            />
+                                        </Td>
+                                </>
+                            )
+                        }
+                        
                     </Tr>
                 ))
             ) : (
@@ -170,22 +178,29 @@ export const ProdutosBanco = ({busca,setErro,setMensagem}) =>
                         <Td>{produto.nome}</Td>
                         <Td>{produto.quantidade}</Td>
                         <Td>{produto.preco}</Td>
-                        <Td>
-                            <IconButton
-                                icon={<EditIcon />}
-                                colorScheme="blue"
-                                variant="ghost"
-                                onClick={() => openModal(produto)}
-                            />
-                        </Td>
-                        <Td>
-                            <IconButton
-                                icon={<DeleteIcon />}
-                                colorScheme="red"
-                                variant="ghost"
-                                onClick={() => handleDelete(produto.id)}
-                            />
-                        </Td>
+                        {
+                            getUserType() === "ADMIN" &&
+                            (
+                                <>
+                                    <Td>
+                                        <IconButton
+                                            icon={<EditIcon />}
+                                            colorScheme="blue"
+                                            variant="ghost"
+                                            onClick={() => openModal(produto)}
+                                        />
+                                    </Td>
+                                    <Td>
+                                        <IconButton
+                                            icon={<DeleteIcon />}
+                                            colorScheme="red"
+                                            variant="ghost"
+                                            onClick={() => handleDelete(produto.id)}
+                                        />
+                                    </Td>
+                                </>
+                            )
+                        }
                     </Tr>
                 ))
             )}

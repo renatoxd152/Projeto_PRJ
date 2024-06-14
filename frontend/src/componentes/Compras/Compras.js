@@ -11,8 +11,7 @@ export const Compras = () => {
     const[produtos,setProdutos] = useState([]);
     const[mensagem,setMensagem] = useState("");
     const[erro,setErro] = useState("")
-    const{token} = useAuth();
-   
+    const{token,getUserType} = useAuth();
     const openModal =  async(compra) => {
         setSelectedCompra(compra);
         setIsOpen(true);
@@ -112,7 +111,14 @@ export const Compras = () => {
                         <Th>Cliente</Th>
                         <Th>Valor da compra</Th>
                         <Th>Data da Compra</Th>
-                        <Th>Deletar</Th>
+                        {
+                            getUserType === "ADMIN" &&
+                            (
+                                <Th>Deletar</Th>
+                            )
+                        }
+                        
+                        
                     </Tr>
                         
                     </Thead>
@@ -123,13 +129,19 @@ export const Compras = () => {
                                 <Td>{compra.nome_cliente}</Td>
                                 <Td>{compra.valor}</Td>
                                 <Td>{compra.data}</Td>
-                                <Td> 
-                                    <IconButton
-                                    icon={<DeleteIcon />}
-                                    colorScheme="red"
-                                    variant="ghost"
-                                    onClick={(e) => handleDelete(compra,e)}/>
-                                </Td>
+                                {
+                                    getUserType === "ADMIN" &&
+                                    (
+                                        <Td> 
+                                            <IconButton
+                                            icon={<DeleteIcon />}
+                                            colorScheme="red"
+                                            variant="ghost"
+                                            onClick={(e) => handleDelete(compra,e)}/>
+                                        </Td>
+                                    )
+                                }
+                                
                             </Tr>
                         ))}
                     </Tbody>

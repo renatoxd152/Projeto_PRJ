@@ -17,7 +17,7 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
     const [compraSelecionada, setCompraSelecionada] = useState(null);
     const[itens,setItens] = useState([])
     const [clientesFiltrados, setClientesFiltrados] = useState([]);
-    
+    const{getUserType} = useAuth()
     useEffect(()=>
         {
             const fetchEstados = async () =>
@@ -316,22 +316,29 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
                             <Td>{cliente.nome_cidade}</Td>
                             <Td>{cliente.numero}</Td>
                             <Td>{cliente.cep}</Td>
-                            <Td>
-                                <IconButton
-                                    icon={<EditIcon />}
-                                    colorScheme="blue"
-                                    variant="ghost"
-                                    onClick={(e) => openModal(cliente,e)}
-                                />
-                            </Td>
-                            <Td>
-                                <IconButton
-                                    icon={<DeleteIcon />}
-                                    colorScheme="red"
-                                    variant="ghost"
-                                    onClick={() => handleDelete(cliente)}
-                                />
-                            </Td>
+                            {
+                                getUserType === "ADMIN" &&
+                                (
+                                    <>      
+                                        <Td>
+                                            <IconButton
+                                                icon={<EditIcon />}
+                                                colorScheme="blue"
+                                                variant="ghost"
+                                                onClick={(e) => openModal(cliente,e)}
+                                            />
+                                        </Td>
+                                        <Td>
+                                            <IconButton
+                                                icon={<DeleteIcon />}
+                                                colorScheme="red"
+                                                variant="ghost"
+                                                onClick={() => handleDelete(cliente)}
+                                            />
+                                        </Td>
+                                    </>
+                                )
+                            }
                         </Tr>
                         )
                     )
@@ -350,22 +357,29 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
                                     <Td>{cliente.nome_cidade}</Td>
                                     <Td>{cliente.numero}</Td>
                                     <Td>{cliente.cep}</Td>
-                                    <Td>
-                                        <IconButton
-                                            icon={<EditIcon />}
-                                            colorScheme="blue"
-                                            variant="ghost"
-                                            onClick={(e) => openModal(cliente,e)}
-                                        />
-                                    </Td>
-                                    <Td>
-                                        <IconButton
-                                            icon={<DeleteIcon />}
-                                            colorScheme="red"
-                                            variant="ghost"
-                                            onClick={() => handleDelete(cliente)}
-                                        />
-                                    </Td>
+                                    {
+                                        getUserType === "ADMIN" &&
+                                        (
+                                            <>      
+                                                <Td>
+                                                    <IconButton
+                                                        icon={<EditIcon />}
+                                                        colorScheme="blue"
+                                                        variant="ghost"
+                                                        onClick={(e) => openModal(cliente,e)}
+                                                    />
+                                                </Td>
+                                                <Td>
+                                                    <IconButton
+                                                        icon={<DeleteIcon />}
+                                                        colorScheme="red"
+                                                        variant="ghost"
+                                                        onClick={() => handleDelete(cliente)}
+                                                    />
+                                                </Td>
+                                            </>
+                                        )
+                                    }
                                 </Tr>
                         )
                         )

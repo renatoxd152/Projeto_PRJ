@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import Usuario from '../../model/Usuario/UsuarioModel.js';
-import config from '../../utils/config.js';
+import generateToken from "../../utils/GenerateToken.js";
 const usuario = express()
 usuario.use(express.json())
 
@@ -132,7 +131,7 @@ usuario.post('/login', async (req, res) => {
       if (!passwordMatch) {
         return res.status(401).json({ mensagem: 'Credenciais inválidas' });
       }
-      const token = jwt.sign({ userId: user.id }, config, { expiresIn: '3h' });
+      const token = generateToken(user);
       res.json({token});
     } catch (error) {
       console.error(error);

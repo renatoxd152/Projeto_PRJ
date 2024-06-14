@@ -1,5 +1,5 @@
+import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useState } from 'react';
-
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -15,8 +15,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
   };
 
+  const getUserType = () => {
+    if (!token) return null;
+
+    const decodedToken = jwtDecode(token);
+    return decodedToken.userType;
+  };
+
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout, getUserType}}>
       {children}
     </AuthContext.Provider>
   );
