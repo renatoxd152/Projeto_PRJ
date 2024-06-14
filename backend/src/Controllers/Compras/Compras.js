@@ -6,12 +6,12 @@ import Compra from '../../model/Compras/ComprasModel.js';
 import ItensCompra from '../../model/Compras/ItensComprasModel.js';
 import Produto from '../../model/Produto/ProdutoModel.js';
 import Usuario from '../../model/Usuario/UsuarioModel.js';
-
+import verifyToken from '../../utils/jwt.js';
 const compra = express()
 compra.use(express.json())
 
 
-compra.get("/compras",async(req,res)=>{
+compra.get("/compras",verifyToken,async(req,res)=>{
     try{
         let comprasdoBanco = await Compra.findAll()
 
@@ -35,7 +35,7 @@ compra.get("/compras",async(req,res)=>{
     }
 })
 
-compra.get("/compras/:idCliente", async (req, res) => {
+compra.get("/compras/:idCliente",verifyToken,async (req, res) => {
     try {
         let idCliente = req.params.idCliente;
 
@@ -62,7 +62,7 @@ compra.get("/compras/:idCliente", async (req, res) => {
 });
 
 
-compra.post("/compras",async(req,res)=>
+compra.post("/compras",verifyToken,async(req,res)=>
 {
     try{
        
@@ -126,7 +126,7 @@ compra.post("/compras",async(req,res)=>
     }
 })
 
-compra.put("/compras/:id",async(req,res)=>{
+compra.put("/compras/:id",verifyToken,async(req,res)=>{
     try{
         let index = req.params.id
 
@@ -156,7 +156,7 @@ compra.put("/compras/:id",async(req,res)=>{
     }
 })
 
-compra.delete("/compras/:id",async(req,res)=>
+compra.delete("/compras/:id",verifyToken,async(req,res)=>
 {
     try {
         
@@ -182,7 +182,7 @@ compra.delete("/compras/:id",async(req,res)=>
     }
 })
 
-compra.get("/relatorio/meses/:mes", async (req, res) => {
+compra.get("/relatorio/meses/:mes",verifyToken,async (req, res) => {
     try {
         const mes = parseInt(req.params.mes, 10);
         const ano = new Date().getFullYear();
@@ -224,7 +224,7 @@ compra.get("/relatorio/meses/:mes", async (req, res) => {
     }
 });
 
-compra.get("/relatorio/compras/clientes", async (req, res) => {
+compra.get("/relatorio/compras/clientes",verifyToken,async (req, res) => {
     try {
         const clientesCompras = await Compra.findAll({
             attributes: [

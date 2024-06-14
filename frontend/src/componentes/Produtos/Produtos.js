@@ -1,5 +1,6 @@
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useAuth } from "../../utils/AuthContext";
 import { Nav } from "../../utils/BarraNavegação/Nav";
 import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
 
@@ -11,6 +12,7 @@ export const Produtos = () =>
     const[quantidade,setQuantidade] = useState("");
     const[mensagem,setMensagem] = useState("");
     const[erro,setErro] = useState("");
+    const{token} = useAuth()
     const handleNome = (event) =>
     {
         setNome(event.target.value);
@@ -37,8 +39,9 @@ export const Produtos = () =>
                 const response = await fetch('http://localhost:3000/produtos',
                     {
                         method:'POST',
-                        headers:{
-                            'Content-Type': 'application/json'
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
                         }
                         ,body:JSON.stringify({nome:nome,preco:preco,quantidade:quantidade,codigo:codigo})
                     }

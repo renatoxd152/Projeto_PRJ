@@ -1,13 +1,14 @@
 import express from 'express'
 import ItensCompra from '../../model/Compras/ItensComprasModel.js'
 import Produto from '../../model/Produto/ProdutoModel.js'
+import verifyToken from '../../utils/jwt.js'
 const itens_compra = express()
 itens_compra.use(express.json())
 
 const itens = [{id:"1",id_compra:1,id_produto:1},{id:"12",id_compra:1,id_produto:2}]
 
 
-itens_compra.get("/itensCompras/:id", async (req, res) => {
+itens_compra.get("/itensCompras/:id",verifyToken ,async (req, res) => {
     try {
         let id_compra = req.params.id;
         let itensdaCompra = await ItensCompra.findAll({
@@ -23,7 +24,7 @@ itens_compra.get("/itensCompras/:id", async (req, res) => {
     }
 });
 
-itens_compra.get("/itensCompras/",async(req,res)=>{
+itens_compra.get("/itensCompras/",verifyToken,async(req,res)=>{
     try {
         let itensdaCompra = await ItensCompra.findAll()
         res.status(200).json(itensdaCompra)
@@ -34,7 +35,7 @@ itens_compra.get("/itensCompras/",async(req,res)=>{
 
 
 
-itens_compra.put("/itensCompras/:id",(req,res)=>{
+itens_compra.put("/itensCompras/:id",verifyToken,async(req,res)=>{
     let index = buscarIndexItensCompra(req.params.id)
     itens[index].id_compra = req.body.id_compra
     itens[index].id_produto = req.body.id_produto
@@ -42,7 +43,7 @@ itens_compra.put("/itensCompras/:id",(req,res)=>{
     res.status(200).json(itens)
 })
 
-itens_compra.delete("/itensCompras/:id",(req,res)=>
+itens_compra.delete("/itensCompras/:id",verifyToken,async(req,res)=>
 {
     let index = buscarIndexItensCompra(req.params.id)
     itens.splice(index,1)

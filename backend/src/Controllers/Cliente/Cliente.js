@@ -1,10 +1,11 @@
 import express from 'express';
 import Cliente from '../../model/Cliente/ClienteModel.js';
 import Compra from '../../model/Compras/ComprasModel.js';
+import verifyToken from '../../utils/jwt.js';
 const cliente = express()
 cliente.use(express.json())
 
-cliente.get("/clientes",async(req,res)=>{
+cliente.get("/clientes",verifyToken,async(req,res)=>{
 
     try{
         const clientesdoBanco = await Cliente.findAll();
@@ -31,7 +32,7 @@ cliente.get("/clientes",async(req,res)=>{
 
 })
 
-cliente.post("/clientes",async(req,res)=>
+cliente.post("/clientes",verifyToken,async(req,res)=>
 {
     try
     {
@@ -70,7 +71,7 @@ cliente.post("/clientes",async(req,res)=>
 })
 
 
-cliente.put("/clientes/:id",async(req,res)=>
+cliente.put("/clientes/:id",verifyToken,async(req,res)=>
 {
     try{
 
@@ -105,7 +106,7 @@ cliente.put("/clientes/:id",async(req,res)=>
 })
 
 
-cliente.delete("/clientes/:id",async(req,res)=>
+cliente.delete("/clientes/:id",verifyToken,async(req,res)=>
 {
     try {
         let index = req.params.id;

@@ -1,6 +1,7 @@
 import { Search2Icon, SmallCloseIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../../utils/AuthContext";
 import { Nav } from "../../utils/BarraNavegação/Nav";
 import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
 
@@ -15,7 +16,7 @@ export const CadastrarCompra = () => {
     const [produtosAdicionados,setAdicionarProduto] = useState([]);
     const[erro,setErro] = useState("");
     const[mensagem,setMensagem] = useState("");
-    
+    const{token} = useAuth()
 
     const handleBusca = (event) => {
         setBusca(event.target.value);
@@ -33,7 +34,15 @@ export const CadastrarCompra = () => {
     useEffect(() => {
         const fetchVendedores = async () => {
             try {
-                const response = await fetch('http://localhost:3000/usuarios');
+                const response = await fetch('http://localhost:3000/usuarios',
+                    {
+                        method:'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                        },
+                    }
+                );
                 const data = await response.json();
                 setVendedores(data);
             } catch (error) {
@@ -41,12 +50,20 @@ export const CadastrarCompra = () => {
             }
         };
         fetchVendedores();
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         const fetchClientes = async () => {
             try {
-                const response = await fetch('http://localhost:3000/clientes');
+                const response = await fetch('http://localhost:3000/clientes',
+                    {
+                        method:'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                        },
+                    }
+                );
                 const data = await response.json();
                 setClientes(data);
             } catch (error) {
@@ -54,12 +71,20 @@ export const CadastrarCompra = () => {
             }
         };
         fetchClientes();
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         const fetchProdutos = async () => {
             try {
-                const response = await fetch('http://localhost:3000/produtos');
+                const response = await fetch('http://localhost:3000/produtos',
+                    {
+                        method:'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                        },
+                    }
+                );
                 const data = await response.json();
                 setProdutos(data);
             } catch (error) {
@@ -67,7 +92,7 @@ export const CadastrarCompra = () => {
             }
         };
         fetchProdutos();
-    }, []);
+    }, [token]);
 
     const handleVendedor = (event) => {
         setVendedor(event.target.value);
@@ -98,8 +123,9 @@ export const CadastrarCompra = () => {
                 const response = await fetch("http://localhost:3000/compras",
                     {
                         method:'POST',
-                        headers:{
-                            'Content-Type': 'application/json'
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
                         },
                         body:JSON.stringify({valor_compra:calcularTotalCompra(),
                             id_cliente:cliente,

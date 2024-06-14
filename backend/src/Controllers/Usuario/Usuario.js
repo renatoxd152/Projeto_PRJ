@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import express from 'express';
 import Usuario from '../../model/Usuario/UsuarioModel.js';
 import generateToken from "../../utils/GenerateToken.js";
+import verifyToken from '../../utils/jwt.js';
 const usuario = express()
 usuario.use(express.json())
 
@@ -41,7 +42,7 @@ usuario.post("/usuarios",async(req,res)=>
     
 })
 
-usuario.get("/usuarios",async(req,res)=>
+usuario.get("/usuarios",verifyToken,async(req,res)=>
 {
     try{
         const usuariodoBanco = await Usuario.findAll();
@@ -59,7 +60,7 @@ usuario.get("/usuarios",async(req,res)=>
     }
 
 })
-usuario.put("/usuarios/:id",async(req,res)=>
+usuario.put("/usuarios/:id",verifyToken,async(req,res)=>
 {
     try
     {
@@ -91,7 +92,7 @@ usuario.put("/usuarios/:id",async(req,res)=>
     }
 })
 
-usuario.delete("/usuarios/:id",async(req,res)=>
+usuario.delete("/usuarios/:id",verifyToken,async(req,res)=>
 {
     try{
         let index = req.params.id

@@ -6,7 +6,6 @@ import { useAuth } from "../../utils/AuthContext";
 export const ClientesBanco = ({busca,setErro,setMensagem}) =>
 {
     const[clientes,setClientes] = useState([])
-    const{token} = useAuth();
     const[clienteSelecionado,setSelecionarCliente] = useState(null);
     const[modal,setModal] = useState(false);
     const[editModal,setEditModal] = useState(false);
@@ -17,13 +16,21 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
     const [compraSelecionada, setCompraSelecionada] = useState(null);
     const[itens,setItens] = useState([])
     const [clientesFiltrados, setClientesFiltrados] = useState([]);
-    const{getUserType} = useAuth()
+    const{getUserType,token} = useAuth()
     useEffect(()=>
         {
             const fetchEstados = async () =>
             {
                 try {
-                    const response = await fetch("http://localhost:3000/estados");
+                    const response = await fetch("http://localhost:3000/estados",
+                        {
+                            method:'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `${token}`,
+                            },
+                        }
+                    );
                     const data = await response.json();
                     setEstados(data) 
                 } catch (error) {
@@ -31,13 +38,21 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
                 }
             }
             fetchEstados()
-        },[])
+        },[token])
     
        
         useEffect(() => {
             const fetchCidades = async () => {
                 try {
-                    const response = await fetch(`http://localhost:3000/cidades/${clienteSelecionado.estado}`);
+                    const response = await fetch(`http://localhost:3000/cidades/${clienteSelecionado.estado}`,
+                        {
+                            method:'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `${token}`,
+                            },
+                        }
+                    );
                     const data = await response.json();
                     setCidades(data); 
                 } catch (error) {
@@ -45,7 +60,7 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
                 }
             };
             fetchCidades();
-        }, [clienteSelecionado]);
+        }, [clienteSelecionado,token]);
 
         useEffect(() => {
             const filtrarClientes = () => {

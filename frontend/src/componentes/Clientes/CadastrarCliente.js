@@ -1,6 +1,7 @@
 import { Button, Flex, Grid, Input, Select, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import validator from 'validator';
+import { useAuth } from "../../utils/AuthContext";
 import { Nav } from "../../utils/BarraNavegação/Nav";
 import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
 export const CadastrarCliente = () => {
@@ -18,7 +19,7 @@ export const CadastrarCliente = () => {
     const[cidades,setCidades] = useState([])
     const[erro,setErro] = useState("");
     const[mensagem,setMensagem] = useState("");
-
+    const {token} = useAuth()
     const handleNome = (event) => {
         setNome(event.target.value);
     };
@@ -68,8 +69,9 @@ export const CadastrarCliente = () => {
                 const response = await fetch('http://localhost:3000/clientes',
                 {
                     method:'POST',
-                    headers:{
-                        'Content-Type': 'application/json'
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`,
                     },
                     body:JSON.stringify({nome:nome,email:email,cpf:cpf,telefone:telefone,
                         cep:cep,rua:rua,bairro:bairro,estado:estado,cidade:cidade,numero:numero})
@@ -90,7 +92,15 @@ export const CadastrarCliente = () => {
         const fetchCEP = async () => {
             if (cep.length === 8) {
                 try {
-                    const response = await fetch(`http://localhost:3000/cep/${cep}`);
+                    const response = await fetch(`http://localhost:3000/cep/${cep}`,
+                        {
+                            method:'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `${token}`,
+                            },
+                        }
+                    );
                     
                     const data = await response.json();
                     
@@ -108,14 +118,22 @@ export const CadastrarCliente = () => {
             }
         };
         fetchCEP();
-    }, [cep]);
+    }, [cep,token]);
 
     useEffect(()=>
     {
         const fetchEstados = async () =>
         {
             try {
-                const response = await fetch("http://localhost:3000/estados");
+                const response = await fetch("http://localhost:3000/estados",
+                    {
+                        method:'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                        },
+                    }
+                );
                 const data = await response.json();
                 setEstados(data) 
             } catch (error) {
@@ -123,13 +141,21 @@ export const CadastrarCliente = () => {
             }
         }
         fetchEstados()
-    },[])
+    },[token])
 
    
     useEffect(() => {
         const fetchCidades = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/cidades/${estado}`);
+                const response = await fetch(`http://localhost:3000/cidades/${estado}`,
+                    {
+                        method:'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${token}`,
+                        },
+                    }
+                );
                 const data = await response.json();
                 setCidades(data); 
             } catch (error) {
@@ -137,7 +163,7 @@ export const CadastrarCliente = () => {
             }
         };
         fetchCidades();
-    }, [estado]);
+    }, [estado,token]);
 
     
     return (

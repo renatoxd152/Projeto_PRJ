@@ -1,11 +1,12 @@
 import express from 'express';
 import ItensCompra from '../../model/Compras/ItensComprasModel.js';
 import Produto from '../../model/Produto/ProdutoModel.js';
+import verifyToken from '../../utils/jwt.js';
 const produto = express()
 
 produto.use(express.json());
 
-produto.get("/produtos",async (req,res)=>
+produto.get("/produtos",verifyToken,async (req,res)=>
 {
     try{
         const produtosdoBanco = await Produto.findAll();
@@ -27,7 +28,7 @@ produto.get("/produtos",async (req,res)=>
     
 })
 
-produto.post("/produtos", async (req, res) => {
+produto.post("/produtos",verifyToken,async (req, res) => {
     try {
         const { nome, preco, quantidade, codigo } = req.body;
 
@@ -45,7 +46,7 @@ produto.post("/produtos", async (req, res) => {
     }
 });
 
-produto.put("/produtos/:id", async (req, res) => {
+produto.put("/produtos/:id",verifyToken,async (req, res) => {
     try {
         let id = req.params.id;
          
@@ -70,7 +71,7 @@ produto.put("/produtos/:id", async (req, res) => {
     }
 });
 
-produto.delete("/produtos/:id",async (req,res)=>
+produto.delete("/produtos/:id",verifyToken,async (req,res)=>
 {
     try{
         let index = req.params.id
