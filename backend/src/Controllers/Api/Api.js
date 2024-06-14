@@ -1,9 +1,10 @@
 import express from 'express';
 import fetch from 'node-fetch';
+import verifyToken from '../../utils/jwt.js';
 const api = express();
 api.use(express.json());
 
-api.get("/cep/:cep", async (req, res) => {
+api.get("/cep/:cep",verifyToken,async (req, res) => {
     const cep = req.params.cep;
     try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
@@ -19,7 +20,7 @@ api.get("/cep/:cep", async (req, res) => {
 });
 
 
-api.get("/estados", async (req, res) => {
+api.get("/estados",verifyToken,async (req, res) => {
     try {
         const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
         const data = await response.json();
@@ -30,7 +31,7 @@ api.get("/estados", async (req, res) => {
     }
 });
 
-api.get('/cidades/:estado', async (req, res) => {
+api.get('/cidades/:estado',verifyToken,async (req, res) => {
    
     try {
         const { estado } = req.params;
@@ -45,7 +46,7 @@ api.get('/cidades/:estado', async (req, res) => {
    
 });
 
-api.get('/cidade/:cidade', async (req, res) => {
+api.get('/cidade/:cidade',verifyToken,async (req, res) => {
     try {
         const {cidade} = req.params;
        
