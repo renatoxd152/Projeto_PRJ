@@ -317,7 +317,7 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
                             <Td>{cliente.numero}</Td>
                             <Td>{cliente.cep}</Td>
                             {
-                                getUserType === "ADMIN" &&
+                                getUserType() === "ADMIN" &&
                                 (
                                     <>      
                                         <Td>
@@ -358,7 +358,7 @@ export const ClientesBanco = ({busca,setErro,setMensagem}) =>
                                     <Td>{cliente.numero}</Td>
                                     <Td>{cliente.cep}</Td>
                                     {
-                                        getUserType === "ADMIN" &&
+                                        getUserType() === "ADMIN" &&
                                         (
                                             <>      
                                                 <Td>

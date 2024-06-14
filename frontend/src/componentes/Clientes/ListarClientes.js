@@ -47,7 +47,7 @@ export const ListarClientes = ()=>
                                 <Th>Número</Th>
                                 <Th>CEP</Th>
                                 {
-                                    getUserType === "ADMIN" &&
+                                    getUserType() === "ADMIN" &&
                                     (
                                         <>
                                             <Th>Editar</Th>

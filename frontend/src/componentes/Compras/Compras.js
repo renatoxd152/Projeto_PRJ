@@ -112,7 +112,7 @@ export const Compras = () => {
                         <Th>Valor da compra</Th>
                         <Th>Data da Compra</Th>
                         {
-                            getUserType === "ADMIN" &&
+                            getUserType() === "ADMIN" &&
                             (
                                 <Th>Deletar</Th>
                             )
@@ -130,7 +130,7 @@ export const Compras = () => {
                                 <Td>{compra.valor}</Td>
                                 <Td>{compra.data}</Td>
                                 {
-                                    getUserType === "ADMIN" &&
+                                    getUserType() === "ADMIN" &&
                                     (
                                         <Td> 
                                             <IconButton
