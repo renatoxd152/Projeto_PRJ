@@ -142,10 +142,11 @@ export const CadastrarCliente = () => {
     
     return (
         <>
-            <Nav />
+           
 
-            <Flex minH="100vh" width="100%" align="center" justify="center">
-                <Flex direction="column">
+            <Flex minH="100vh" width="100%" align="center" justify="flex-start" direction="column">
+            <Nav />
+                <Flex direction="column" align="center" justify="center" flex="1">
                     <Mensagem erro={erro} mensagem={mensagem}/>
                     <Text color="black" fontSize="2xl">Cadastre seus clientes!</Text>
                     <Grid templateColumns="repeat(2, 1fr)" gap={6}>

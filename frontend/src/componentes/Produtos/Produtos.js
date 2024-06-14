@@ -62,34 +62,30 @@ export const Produtos = () =>
     }
     return(
         <>
-            <Nav/>
-            <Flex minH="100vh" width="100%" align="center" justify="center">
-                
-                <Flex direction="column">
-                    <Mensagem erro={erro} mensagem={mensagem}/>
-                    <Text color="black" fontSize="2xl">Cadastre os seus produtos!</Text>
-                    <Flex direction="column">
-                        <Text>Digite o nome do produto</Text>
-                        <Input type="text" value={nome} onChange={handleNome}></Input>
-                    </Flex>
-                    <Flex direction="column">
-                        <Text>Digite o código do produto</Text>
-                        <Input type="text" value={codigo} onChange={handleCodigo}></Input>
-                    </Flex>
-                    <Flex direction="column">
-                        <Text>Digite o preço do produto</Text>
-                        <Input type="number" value={preco} onChange={handlePreco}></Input>
-                    </Flex>
-
-                    <Flex direction="column">
-                        <Text>Digite a quantidade do produto</Text>
-                        <Input type="number" value={quantidade} onChange={handleQuantidade}></Input>
-                    </Flex>
-
-                    <Button colorScheme="blue" onClick={handleCadastrarProduto} m="4">Cadastrar Produto</Button>
+        <Flex minH="100vh" width="100%" align="center" justify="flex-start" direction="column">
+            <Nav />
+            <Flex direction="column" align="center" justify="center" flex="1">
+                <Mensagem erro={erro} mensagem={mensagem} />
+                <Text color="black" fontSize="2xl" mb="4">Cadastre os seus produtos!</Text>
+                <Flex direction="column" mb="4">
+                    <Text>Digite o nome do produto</Text>
+                    <Input type="text" value={nome} onChange={handleNome} />
                 </Flex>
-                
+                <Flex direction="column" mb="4">
+                    <Text>Digite o código do produto</Text>
+                    <Input type="text" value={codigo} onChange={handleCodigo} />
+                </Flex>
+                <Flex direction="column" mb="4">
+                    <Text>Digite o preço do produto</Text>
+                    <Input type="number" value={preco} onChange={handlePreco} />
+                </Flex>
+                <Flex direction="column" mb="4">
+                    <Text>Digite a quantidade do produto</Text>
+                    <Input type="number" value={quantidade} onChange={handleQuantidade} />
+                </Flex>
+                <Button colorScheme="blue" onClick={handleCadastrarProduto}>Cadastrar Produto</Button>
             </Flex>
-        </>
+        </Flex>
+    </>
     )
 }

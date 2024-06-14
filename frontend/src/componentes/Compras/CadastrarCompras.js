@@ -1,5 +1,5 @@
-import { Search2Icon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Input, InputGroup, InputLeftElement, Select, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { Search2Icon, SmallCloseIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Table, TableCaption, TableContainer, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Nav } from "../../utils/BarraNavegação/Nav";
 import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
@@ -149,6 +149,11 @@ export const CadastrarCompra = () => {
         return produtosAdicionados.reduce((total, produto) => total + calcularTotalProduto(produto), 0);
     };
 
+    const removerProduto = (produto) =>
+    {
+        setAdicionarProduto(produtosAdicionados.filter(p=> p.id != produto.id))
+    }
+
     return (
         <>
             <Flex minH="100vh" width="100%" align="center" justify="flex-start" direction="column">
@@ -191,7 +196,7 @@ export const CadastrarCompra = () => {
                                 <Box mt={2} width="100%">
                                     <VStack spacing={2} align="start">
                                         {resultadosBusca.map(produto => (
-                                            <Box key={produto.id} p={2} border="1px solid #ccc" borderRadius="md" width="100%">
+                                            <Box key={produto.id} p={2} border="1px solid #ccc" borderRadius="md" width="100%" bg="white">
                                                 <Text onClick={() =>handleAdicionarProduto(produto)} style={{cursor:'pointer'}}>{produto.nome} - {produto.codigo}</Text>
                                             </Box>
                                         ))}
@@ -227,9 +232,11 @@ export const CadastrarCompra = () => {
                                                         value={produto.quantidade} 
                                                         onChange={(e) => handleQuantidadeChange(produto.id, e.target.value)} 
                                                         placeholder="Quantidade" 
-                                                    />  
-                                                </Td>
+                                                    /></Td>
+                                                
                                                 <Td>{calcularTotalProduto(produto)}</Td>
+                                                <Td><IconButton icon={<SmallCloseIcon/>} colorScheme="red"
+                                                    variant="ghost" onClick={() => removerProduto(produto)}/></Td>
                                                 </Tr>
                                             )
                                         )}
