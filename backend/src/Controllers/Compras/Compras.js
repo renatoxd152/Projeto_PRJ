@@ -4,6 +4,7 @@ import { Op, Sequelize } from 'sequelize';
 import Cliente from '../../model/Cliente/ClienteModel.js';
 import Compra from '../../model/Compras/ComprasModel.js';
 import ItensCompra from '../../model/Compras/ItensComprasModel.js';
+import Produto from '../../model/Produto/ProdutoModel.js';
 import Usuario from '../../model/Usuario/UsuarioModel.js';
 
 const compra = express()
@@ -81,6 +82,17 @@ compra.post("/compras",async(req,res)=>
         if(!admin)
             return res.status(404).json({erro:"Esse admin não foi encontrado!"})
 
+
+        for (const item of produtos) {
+            const produto = await Produto.findByPk(item.id);
+            if (!produto) {
+                return res.status(404).json({ erro: `Produto com ID ${item.id} não encontrado` });
+            }
+            if (produto.quantidade < item.quantidade) {
+                return res.status(400).json({ erro: `Produto ${produto.nome} não possui quantidade suficiente em estoque` });
+            }
+        }
+
         const data = new Date();
         const data_compra = format(data, 'yyyy-MM-dd HH:mm:ss');
         let novaCompra = await Compra.create({valor:valor_compra,id_cliente,id_admin,data:data_compra})
@@ -88,6 +100,11 @@ compra.post("/compras",async(req,res)=>
         
         await Promise.all(
             produtos.map(async(produto)=>{
+
+                const produtoAtualizado = await Produto.findByPk(produto.id);
+                produtoAtualizado.quantidade -= produto.quantidade;
+                await produtoAtualizado.save();
+
                 await ItensCompra.create(
                     {
                         id_compra:novaCompra.id,
@@ -125,7 +142,7 @@ compra.put("/compras/:id",async(req,res)=>{
         {
             return res.status(404).json({mensagem:"Essa compra não foi encontrada!"})
         }
-
+        
         compraparaAtualizar.valor = valor
         compraparaAtualizar.id_cliente = id_cliente
         compraparaAtualizar.id_admin = id_admin

@@ -151,7 +151,7 @@ export const CadastrarCompra = () => {
 
     const removerProduto = (produto) =>
     {
-        setAdicionarProduto(produtosAdicionados.filter(p=> p.id != produto.id))
+        setAdicionarProduto(produtosAdicionados.filter(p=> p.id !== produto.id))
     }
 
     return (
