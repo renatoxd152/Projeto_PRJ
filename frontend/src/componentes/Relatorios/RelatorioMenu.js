@@ -30,6 +30,7 @@ export const MenuRelatorio = () => {
                         justifyContent="center"
                         cursor={"pointer"}
                         onClick={handleRelatoriosVendasMes}
+                        _hover={{backgroundColor:'#7ee0df'}}
                     >
                         <Text textAlign="center" mt={2} fontSize="xl" fontWeight="semibold">Relatório de Vendas Mensais</Text>
                         <Image
@@ -48,6 +49,7 @@ export const MenuRelatorio = () => {
                         alignItems="center"
                         justifyContent="center"
                         cursor={"pointer"}
+                        _hover={{backgroundColor:'#7ee0df'}}
                         onClick={handleRelatoriosComprasClientes}
                     >
                         <Text textAlign="center" mt={2} fontSize="xl" fontWeight="semibold">Relatório de Compras por Clientes</Text>
@@ -67,6 +69,7 @@ export const MenuRelatorio = () => {
                         justifyContent="center"
                         flexDirection="column"
                         cursor={"pointer"}
+                        _hover={{backgroundColor:'#7ee0df'}}
                         onClick={handleRelatoriosProdutosVendidos}
                     >
                         <Text textAlign="center" mt={2} fontSize="xl" fontWeight="semibold">Relatório de Produtos mais Vendidos</Text>
