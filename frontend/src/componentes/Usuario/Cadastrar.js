@@ -20,6 +20,10 @@ export const Cadastrar = () =>
         setCPF(event.target.value);
     }
 
+    const validarCPF = (cpf) => {
+        return cpf.length === 11;
+    };
+
     const handleNome = (event) =>
     {
         setNome(event.target.value)
@@ -91,6 +95,10 @@ export const Cadastrar = () =>
             {
                 setErro("Preencha os campos corretamente!");
                 setMensagem("")
+                return;
+            }
+            if (!validarCPF(cpf)) {
+                setErro("O CPF deve conter exatamente 11 dígitos!");
                 return;
             }
             try
