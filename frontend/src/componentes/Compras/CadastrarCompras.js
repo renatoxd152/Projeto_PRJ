@@ -46,7 +46,7 @@ export const CadastrarCompra = () => {
     useEffect(() => {
         const fetchVendedores = async () => {
             try {
-                const response = await fetch('http://localhost:3000/usuarios/vendedores',
+                const response = await fetch('http://localhost:3000/usuarios',
                     {
                         method:'GET',
                         headers: {

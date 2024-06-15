@@ -71,8 +71,7 @@ compra.post("/compras",verifyToken,async(req,res)=>
         const admin = await Usuario.findOne({
             where:
             {
-                id:id_admin,
-                tipo:"ADMIN"
+                id:id_admin
             }
         })
         const cliente = await Cliente.findByPk(id_cliente)
