@@ -60,6 +60,30 @@ usuario.get("/usuarios",verifyToken,async(req,res)=>
     }
 
 })
+
+usuario.get("/usuarios/vendedores",verifyToken,async(req,res)=>
+    {
+        try{
+            const usuariodoBanco = await Usuario.findAll({
+                where: {
+                    tipo: 'ADMIN'
+                }
+            });
+    
+            const mensagem = usuariodoBanco.map(usuarios=>({
+                id:usuarios.id,
+                nome:usuarios.nome,
+                tipo:usuarios.tipo
+            }))
+            res.status(200).send(mensagem)
+        }
+        catch(erro)
+        {
+            res.status(500).json({mensagem:"Erro interno no servidor!"})
+        }
+    
+    })
+
 usuario.put("/usuarios/:id",verifyToken,async(req,res)=>
 {
     try
