@@ -9,6 +9,8 @@ import { ListarProdutos } from './componentes/Produtos/ListarProdutos.js';
 import { Produtos } from './componentes/Produtos/Produtos.js';
 import { ComprasClientes } from './componentes/Relatorios/RelatorioComprasClientes.js';
 import { ComprasMes } from './componentes/Relatorios/RelatorioComprasMes.js';
+import { MenuRelatorio } from './componentes/Relatorios/RelatorioMenu.js';
+import RelatorioProdutosVendidos from './componentes/Relatorios/RelatorioProdutosVendidos.js';
 import { Cadastrar } from './componentes/Usuario/Cadastrar.js';
 import { AuthProvider } from './utils/AuthContext.js';
 
@@ -26,6 +28,8 @@ function App() {
           <Route path='/listarClientes' element={<PrivateRoute><ListarClientes/></PrivateRoute>}/>
           <Route path='/compras/mes' element={<PrivateRoute><ComprasMes/></PrivateRoute>}/>
           <Route path='/compras/clientes' element={<PrivateRoute><ComprasClientes/></PrivateRoute>}/>
+          <Route path='/relatorios' element={<PrivateRoute><MenuRelatorio/></PrivateRoute>}/>
+          <Route path='/relatorios/produtos-vendidos' element={<PrivateRoute><RelatorioProdutosVendidos/></PrivateRoute>}/>
         </Routes>
       </Router>
     </AuthProvider>

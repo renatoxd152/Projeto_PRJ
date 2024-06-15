@@ -13,6 +13,13 @@ export const Nav = () => {
         logout();
         return navigate("/");
     }
+
+
+    const handleRelatoriosClick = () => {
+        navigate('/relatorios');
+    };
+
+
     return (
         <Flex bg="#0f75fa" w="100%" minH="5vh" color="black" p={4} alignItems="center">
             <Box display="flex" alignItems="center" flex="1">
@@ -59,17 +66,9 @@ export const Nav = () => {
                 </Menu>
 
                 <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                    <MenuButton as={Button} onClick={handleRelatoriosClick}>
                         Relatórios
                     </MenuButton>
-                    <MenuList>
-                        <MenuItem>
-                            <Link href='/compras/mes'>Relatório de compras por mês</Link>
-                        </MenuItem>
-                        <MenuItem>
-                            <Link href='/compras/clientes'>Relatório de clientes com mais compras por mês</Link>
-                        </MenuItem>
-                    </MenuList>
                 </Menu>
             </Box>
             <IconButton

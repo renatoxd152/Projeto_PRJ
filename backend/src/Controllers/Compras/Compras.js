@@ -256,6 +256,38 @@ compra.get("/relatorio/compras/clientes",verifyToken,async (req, res) => {
 });
 
 
+compra.get("/relatorio/produtos-vendidos",verifyToken ,async (req, res) => {
+    try {
+        const produtosVendidos = await ItensCompra.findAll({
+            attributes: [
+                'id_produto',
+                [Sequelize.fn('sum', Sequelize.col('itensPedido.quantidade')), 'total_vendido']
+            ],
+            include: [{
+                model: Produto,
+                attributes: ['nome']
+            }],
+            group: ['id_produto', 'Produto.id']
+        });
+
+        if (produtosVendidos.length === 0) {
+            return res.status(404).json({ erro: 'Nenhum produto vendido encontrado!' });
+        }
+
+        const resultado = produtosVendidos.map(item => ({
+            id_produto: item.id_produto,
+            nome_produto: item.produto.nome,
+            total_vendido: item.dataValues.total_vendido
+        }));
+
+        res.status(200).json(resultado);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ erro: "Erro interno no servidor!" });
+    }
+});
+
+
 
 
 
