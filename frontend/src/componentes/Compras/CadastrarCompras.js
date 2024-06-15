@@ -19,13 +19,25 @@ export const CadastrarCompra = () => {
     const{token} = useAuth()
 
     const handleBusca = (event) => {
-        setBusca(event.target.value);
+        let valorBusca = event.target.value;
+        setBusca(valorBusca);
         if (event.target.value) {
             const resultados = produtos.filter(produto => 
-                produto.nome.toLowerCase().includes(event.target.value.toLowerCase()) ||
-                produto.codigo.toLowerCase().includes(event.target.value.toLowerCase())
+                produto.nome.toLowerCase().includes(valorBusca.toLowerCase()) ||
+                produto.codigo.toLowerCase().includes(valorBusca.toLowerCase())
             );
-            setResultadosBusca(resultados);
+    
+            if (resultados.length === 1 && resultados[0].codigo.toLowerCase() ===  valorBusca.toLowerCase()) {
+                handleAdicionarProduto(resultados[0])
+                setBusca("");
+                setResultadosBusca([]);
+            }
+            else
+            {
+                setResultadosBusca(resultados);
+            }
+
+           
         } else {
             setResultadosBusca([]);
         }
