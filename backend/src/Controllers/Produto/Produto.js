@@ -31,7 +31,17 @@ produto.get("/produtos",verifyToken,async (req,res)=>
 produto.post("/produtos",verifyToken,async (req, res) => {
     try {
         const { nome, preco, quantidade, codigo } = req.body;
-
+        let encontrarCodigo = await Produto.findOne(
+            {
+                where:{
+                    codigo:codigo
+                }
+            }
+        )
+        if(encontrarCodigo)
+        {
+            return res.status(404).json({ erro: 'Esse produto já está cadastrado!' });
+        }
         const novoProduto = await Produto.create({
             nome,
             preco,
@@ -55,7 +65,7 @@ produto.put("/produtos/:id",verifyToken,async (req, res) => {
         let produtoParaAtualizar = await Produto.findByPk(id);
         
         if (!produtoParaAtualizar) {
-            return res.status(404).json({ erro: 'Produto não encontrado' });
+            return res.status(400).json({ erro: 'Produto não encontrado' });
         }
 
         produtoParaAtualizar.nome = nome;
