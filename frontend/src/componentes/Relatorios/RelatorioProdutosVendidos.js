@@ -5,7 +5,7 @@ import { useAuth } from '../../utils/AuthContext';
 import { Nav } from '../../utils/BarraNavegação/Nav';
 import { Mensagem } from '../../utils/Mensagem/MensagemStatus';
 
-const RelatorioProdutosVendidos = () => {
+export const RelatorioProdutosVendidos = () => {
   const [dadosRelatorio, setDadosRelatorio] = useState([]);
   const[erro,setErro] = useState("")
     const{token} = useAuth()
@@ -66,4 +66,3 @@ const RelatorioProdutosVendidos = () => {
   );
 };
 
-export default RelatorioProdutosVendidos;

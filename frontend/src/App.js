@@ -10,7 +10,7 @@ import { Produtos } from './componentes/Produtos/Produtos.js';
 import { ComprasClientes } from './componentes/Relatorios/RelatorioComprasClientes.js';
 import { ComprasMes } from './componentes/Relatorios/RelatorioComprasMes.js';
 import { MenuRelatorio } from './componentes/Relatorios/RelatorioMenu.js';
-import RelatorioProdutosVendidos from './componentes/Relatorios/RelatorioProdutosVendidos.js';
+import { RelatorioProdutosVendidos } from './componentes/Relatorios/RelatorioProdutosVendidos.js';
 import { Cadastrar } from './componentes/Usuario/Cadastrar.js';
 import { AuthProvider } from './utils/AuthContext.js';
 
