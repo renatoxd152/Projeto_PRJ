@@ -2,8 +2,8 @@ import { Button, Flex, Grid, Input, Select, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import validator from 'validator';
 import { useAuth } from "../../utils/AuthContext";
-import { Nav } from "../../utils/BarraNavegação/Nav";
 import { Mensagem } from "../../utils/Mensagem/MensagemStatus";
+import { MenuNav } from "../layout/menu/index.tsx";
 export const CadastrarCliente = () => {
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
@@ -171,7 +171,7 @@ export const CadastrarCliente = () => {
            
 
             <Flex minH="100vh" width="100%" align="center" justify="flex-start" direction="column">
-            <Nav />
+            <MenuNav />
                 <Flex direction="column" align="center" justify="center" flex="1">
                     <Mensagem erro={erro} mensagem={mensagem}/>
                     <Text color="black" fontSize="2xl">Cadastre seus clientes!</Text>
