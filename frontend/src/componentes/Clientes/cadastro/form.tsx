@@ -1,7 +1,7 @@
 import { Button, Flex, Grid, Input, Text } from "@chakra-ui/react";
 import { useFormik } from 'formik';
 import { AutoComplete, AutoCompleteCompleteEvent } from 'primereact/autocomplete';
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Cidade } from "../../../app/models/cidades/index.ts";
 import { Cliente } from "../../../app/models/clientes";
 import { Estado } from "../../../app/models/estados";
@@ -26,6 +26,7 @@ const formScheme: Cliente =
     numero:0
 }
 
+
 export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
     {
         onSubmit
@@ -46,7 +47,7 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
             onSubmit,
         }
     );
-    console.log(estado)
+    console.log("oi")
     const handleEstadoAutoComplete = async (e:AutoCompleteCompleteEvent)=>
     {
         if(!listaEstados.length)
@@ -62,15 +63,17 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
 
         setListaEstadoFiltrado(estadosEncontradosFiltrados)
     }
-    useEffect(() => {
-        const fetchCidades = async () => {
-            if (estado?.id) {
-                const cidadesEncontradas = await cidadeService.listCidades(estado.id);
-                setListaCidades(cidadesEncontradas);
-            }
-        };
-        fetchCidades();
-    }, [estado,cidadeService]);
+    const handleEstadoChange = async (e: { value: Estado }) => {
+        setListaCidades([]);
+        const estadoSelecionado = e.value;
+        setEstado(estadoSelecionado);
+        formik.setFieldValue("estado", estadoSelecionado?.id);
+    
+        if (estadoSelecionado?.id) {
+            const cidadesEncontradas = await cidadeService.listCidades(estadoSelecionado.id);
+            setListaCidades(cidadesEncontradas);
+        }
+    };
 
     const handleCidadeAutoComplete = (e: AutoCompleteCompleteEvent) => {
         const cidadesEncontradasFiltradas = listaCidades.filter((cidade: Cidade) =>
@@ -122,10 +125,7 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
                         completeMethod={handleEstadoAutoComplete}
                         value={estado}
                         field="nome"
-                        onChange={e=>{
-                            setEstado(e.value);
-                            formik.setFieldValue("estado", e.value.id);
-                        }} dropdown/>
+                        onChange={handleEstadoChange}  dropdown/>
                         {/* <Select placeholder='Selecione um estado' value={formik.values.estado} onChange={formik.handleChange}>
                             {estados.map(estado=>
                             (
@@ -142,7 +142,10 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
                         completeMethod={handleCidadeAutoComplete}
                         value={cidade}
                         field="nome"
-                        onChange={e=>setCidade(e.value)} dropdown/>
+                         onChange={e => {
+                            setCidade(e.value);  // Altera a cidade localmente
+                            formik.setFieldValue("cidade", e.value?.id);  // Altera o valor da cidade no formik
+                        }}  dropdown/>
                         {/* <Select placeholder="Selecione uma cidade" value={formik.values.cidade} onChange={formik.handleChange}>
                             {
                                 cidades.map(cidade=>
