@@ -75,9 +75,7 @@ export const CadastrarCliente = () => {
                     },
                     body:JSON.stringify({nome:nome,email:email,cpf:cpf,telefone:telefone,
                         cep:cep,rua:rua,bairro:bairro,estado:estado,cidade:cidade,numero:numero})
-                }
-                
-                )
+                })
                 const data = await response.json();
                 setMensagem(data.mensagem);
                 setErro("");
