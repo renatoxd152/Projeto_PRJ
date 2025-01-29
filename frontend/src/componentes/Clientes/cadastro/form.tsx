@@ -1,12 +1,15 @@
-import { Button, Flex, Grid, Input, Text } from "@chakra-ui/react";
+import { Button, Flex, Grid, Text } from "@chakra-ui/react";
 import { useFormik } from 'formik';
 import { AutoComplete, AutoCompleteCompleteEvent } from 'primereact/autocomplete';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Cidade } from "../../../app/models/cidades/index.ts";
 import { Cliente } from "../../../app/models/clientes";
 import { Estado } from "../../../app/models/estados";
+import { useCEPService } from "../../../app/services/cep.service.ts";
 import { useCidadeService } from "../../../app/services/cidades.service.ts";
 import { useEstadoService } from "../../../app/services/estados.service.ts";
+import { InputPersonalizado } from "../../../common/input/index.tsx";
+import { validationSchema } from "./validationSchemaCliente.ts";
 
 interface ClienteFormProps{
     onSubmit:(cliente:Cliente)=>void;
@@ -41,13 +44,14 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
     const[listaCidadesFiltradas,setListaCidadesFiltradas] = useState<Cidade[]>([]);
     const estadoService = useEstadoService();
     const cidadeService = useCidadeService();
+    const cepService = useCEPService();
     const formik = useFormik<Cliente>(
         {
             initialValues:{...formScheme},
             onSubmit,
+            validationSchema:validationSchema
         }
     );
-    console.log("oi")
     const handleEstadoAutoComplete = async (e:AutoCompleteCompleteEvent)=>
     {
         if(!listaEstados.length)
@@ -82,41 +86,37 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
 
         setListaCidadesFiltradas(cidadesEncontradasFiltradas);
     };
+
+
+    useEffect(() => {
+        const fetchCEP = async () => {
+            if (formik.values.cep?.length === 8) {
+                try {
+                    const data = await cepService.searchCEP(formik.values.cep);
+                    formik.setFieldValue("rua", data.logradouro);
+                    formik.setFieldValue("bairro", data.bairro);
+                    formik.setFieldValue("estado",data.estado);
+                } catch (error) {
+                    console.error("Erro ao buscar CEP:", error);
+                }
+            }
+        };
+        fetchCEP();
+    }, [formik.values.cep]);
+    console.log(formik.values)
     return(
         <Flex direction="column" align="center" justify="center" flex="1">
                 <form onSubmit={formik.handleSubmit}>
                 <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-                    <Flex direction="column">
-                        <Text>Digite o nome do cliente</Text>
-                        <Input type="text" value={formik.values.nome} name="nome" onChange={formik.handleChange}></Input>
-                    </Flex>
-                    <Flex direction="column">
-                        <Text>Digite o email do cliente</Text>
-                        <Input type="text" value={formik.values.email} name="email" onChange={formik.handleChange}></Input>
-                    </Flex>
-                    <Flex direction="column">
-                        <Text>Digite o cpf do cliente</Text>
-                        <Input type="number" value={formik.values.cpf} name="cpf" onChange={formik.handleChange}></Input>
-                    </Flex>
-                    <Flex direction="column">
-                        <Text>Digite o telefone do cliente</Text>
-                        <Input type="number" value={formik.values.telefone} name="telefone" onChange={formik.handleChange}></Input>
-                    </Flex>
-    
-                    <Flex direction="column">
-                        <Text>Digite o CEP do cliente</Text>
-                        <Input type="text" value={formik.values.cep} name="cep" maxLength={8} onChange={formik.handleChange}></Input>
-                    </Flex>
-                    
-                    <Flex direction="column">
-                        <Text>Digite a rua do cliente</Text>
-                        <Input type="text" value={formik.values.rua} name="rua" onChange={formik.handleChange}></Input>
-                    </Flex>
-                    <Flex direction="column">
-                        <Text>Digite o bairro do cliente</Text>
-                        <Input type="text" value={formik.values.bairro} name="bairro" onChange={formik.handleChange}></Input>
-                    </Flex>
-                    <Flex direction="column">
+                     <Flex direction="column"><InputPersonalizado label="Digite o nome do cliente" type="text" value={formik.values.nome} name="nome" onChange={formik.handleChange} error={formik.errors.nome}/></Flex>
+                     <Flex direction="column"><InputPersonalizado label="Digite o email do cliente" type="text" value={formik.values.email} name="email" onChange={formik.handleChange} error={formik.errors.email}/></Flex>
+                     <Flex direction="column"><InputPersonalizado label="Digite o cpf do cliente" type="text" value={formik.values.cpf} name="cpf" onChange={formik.handleChange} error={formik.errors.cpf}/></Flex>
+                     <Flex direction="column"><InputPersonalizado label="Digite o telefone do cliente" type="text" value={formik.values.telefone} name="telefone" onChange={formik.handleChange} error={formik.errors.telefone}/></Flex>
+                     <Flex direction="column"><InputPersonalizado label="Digite o CEP do cliente" type="text" value={formik.values.cep} name="cep" onChange={formik.handleChange} error={formik.errors.cep} comprimento={8}/></Flex>
+                     <Flex direction="column"><InputPersonalizado label="Digite a rua do cliente" type="text" value={formik.values.rua} name="rua" onChange={formik.handleChange} error={formik.errors.rua}/></Flex>
+                     <Flex direction="column"><InputPersonalizado label="Digite o bairro do cliente" type="text" value={formik.values.bairro} name="bairro" onChange={formik.handleChange} error={formik.errors.bairro}/></Flex>
+                
+                    <Flex direction="column" fontWeight="bold" mb="1">
                         <Text>Escolha o estado do cliente</Text>
                         <AutoComplete 
                         suggestions={listaEstadoFiltrado}
@@ -125,15 +125,9 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
                         completeMethod={handleEstadoAutoComplete}
                         value={estado}
                         field="nome"
-                        onChange={handleEstadoChange}  dropdown/>
-                        {/* <Select placeholder='Selecione um estado' value={formik.values.estado} onChange={formik.handleChange}>
-                            {estados.map(estado=>
-                            (
-                                <option key={estado.id} value={estado.sigla}>{estado.nome}</option>
-                            ))}
-                        </Select> */}
+                        onChange={handleEstadoChange} dropdown/>
                     </Flex>
-                    <Flex direction="column">
+                    <Flex direction="column" fontWeight="bold" mb="1">
                         <Text>Escolha a cidade do cliente</Text>
                         <AutoComplete 
                         suggestions={listaCidadesFiltradas}
@@ -143,24 +137,13 @@ export const ClienteFormCadastro:React.FC<ClienteFormProps> = (
                         value={cidade}
                         field="nome"
                          onChange={e => {
-                            setCidade(e.value);  // Altera a cidade localmente
-                            formik.setFieldValue("cidade", e.value?.id);  // Altera o valor da cidade no formik
+                            setCidade(e.value);
+                            formik.setFieldValue("cidade", e.value?.id);
                         }}  dropdown/>
-                        {/* <Select placeholder="Selecione uma cidade" value={formik.values.cidade} onChange={formik.handleChange}>
-                            {
-                                cidades.map(cidade=>
-                                    (
-                                        <option key={cidade.id} value={cidade.id}>{cidade.nome}</option>
-                                    )
-                                )
-                            }
-                        </Select> */}
+                       
                             
                     </Flex>
-                    <Flex direction="column">
-                        <Text>Digite o número do cliente</Text>
-                        <Input type="number" name="numero" value={formik.values.numero} onChange={formik.handleChange}></Input>
-                    </Flex>
+                    <Flex direction="column"><InputPersonalizado label="Digite o número do cliente" type="text" value={formik.values.numero} name="numero" onChange={formik.handleChange} error={formik.errors.numero}/></Flex>
                     
                 </Grid>
                 <Button colorScheme="blue" type="submit" m="4">Cadastrar Cliente</Button>
